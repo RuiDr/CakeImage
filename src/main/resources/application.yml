@@ -1,0 +1,27 @@
+# 数据库配置
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/user?serverTimezone=GMT
+    username: root
+    password: dr178512
+  # 前端页面配置
+  thymeleaf:
+    thymeleaf:
+      cache: false
+      prefix: classpath:/templates/
+      suffix: .html
+      encoding: UTF-8
+      content-type: text/html
+      mode: HTML5
+    servlet:
+      content-type: text/html
+  mybatis:
+    configuration:
+      #配置项：开启下划线到驼峰的自动转换. 作用：将数据库字段根据驼峰规则自动注入到对象属性。
+    map-underscore-to-camel-case: true
+  logging:
+    level:
+      #打印SQL信息
+      com.hehe.mapper: debug
+
