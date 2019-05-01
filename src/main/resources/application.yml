@@ -9,13 +9,14 @@ spring:
   thymeleaf:
     thymeleaf:
       cache: false
-      prefix: classpath:/templates/
+      prefix: /
       suffix: .html
       encoding: UTF-8
       content-type: text/html
       mode: HTML5
     servlet:
       content-type: text/html
+      context-path: /index.html
   mybatis:
     configuration:
       #配置项：开启下划线到驼峰的自动转换. 作用：将数据库字段根据驼峰规则自动注入到对象属性。
