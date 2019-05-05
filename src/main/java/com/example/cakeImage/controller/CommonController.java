@@ -1,5 +1,5 @@
-package com.example.demo.controller;
-import com.example.demo.service.CommonService;
+package com.example.cakeImage.controller;
+import com.example.cakeImage.service.CommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

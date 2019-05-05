@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.example.cakeImage.entity;
 
 public class User {
   public   String username;

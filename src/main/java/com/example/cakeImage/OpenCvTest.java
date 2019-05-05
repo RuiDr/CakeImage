@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.cakeImage;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;

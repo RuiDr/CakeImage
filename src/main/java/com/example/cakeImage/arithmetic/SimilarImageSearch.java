@@ -1,4 +1,4 @@
-package com.example.demo.arithmetic;
+package com.example.cakeImage.arithmetic;
 
 
 import java.awt.image.BufferedImage;

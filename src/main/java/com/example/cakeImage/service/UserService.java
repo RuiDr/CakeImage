@@ -1,6 +1,6 @@
-package com.example.demo.service;
+package com.example.cakeImage.service;
 
-import com.example.demo.mapper.User;
+import com.example.cakeImage.mapper.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.example.demo.arithmetic;
+package com.example.cakeImage.arithmetic;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
