@@ -16,7 +16,7 @@ public class CommonController {
         return "/index";
     }
 //   登录界面
-    @RequestMapping("/loginPage")
+    @RequestMapping("/loginUser")
     public String loginPage(HttpServletRequest request, HttpSession session){
 
 
@@ -40,18 +40,26 @@ public class CommonController {
 //    本地上传图片
     @GetMapping("/location")
     public String location(){
+
+        System.out.println("hello location");
+
         return "/location";
     }
 
 //    相似图片
     @GetMapping("/detail")
     public String detail(){
+
+        System.out.println("hello detail");
         return "/detail";
     }
 
 //    照相机
 @GetMapping("/camera")
 public String camera(){
+    System.out.println("hello camera");
+
+
     return "/camera";
 }
 
