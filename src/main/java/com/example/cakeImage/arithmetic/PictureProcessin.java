@@ -6,10 +6,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.io.*;
-
 public class PictureProcessin {
     public static final String path="C:/Users/CrazyCake/Pictures/testPic";
-
     public static BufferedImage thumb(BufferedImage source,int width,int height,boolean b){
 //        targetW,targerH分别表示目标长和宽
         int type=source.getType();

@@ -37,12 +37,11 @@ public class CommonController {
     public String loginIndex() {
         return "/test";
     }
+
 //    本地上传图片
     @GetMapping("/location")
     public String location(){
-
         System.out.println("hello location");
-
         return "/location";
     }
 
@@ -54,13 +53,19 @@ public class CommonController {
         return "/detail";
     }
 
-//    照相机
-@GetMapping("/camera")
-public String camera(){
-    System.out.println("hello camera");
+    //    照相机
+    @GetMapping("/camera")
+    public String camera(){
+        System.out.println("hello camera");
 
 
-    return "/camera";
-}
+        return "/camera";
+    }
+
+//    注册界面
+    @GetMapping("/register")
+    public String register(){
+        return "/register";
+    }
 
 }

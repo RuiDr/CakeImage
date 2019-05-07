@@ -1,10 +1,7 @@
 package com.example.cakeImage.arithmetic;
-
-
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-
 public class SimilarImageSearch {
     public static void main(String[] args) {
         List<String>hashCodes=new ArrayList<>();

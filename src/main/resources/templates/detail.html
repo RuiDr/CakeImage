@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <title>Detial</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -34,7 +34,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
             </ul>
             <ul th:if="${session.username}==null">
-                <li><a href="register.html">Register</a></li>|
+                <li><a href="/register">Register</a></li>|
                 <li class="login" >
                     <div id="loginContainer"><a href="#" id="loginButton"><span>Login</span></a>
                         <div id="loginBox">
