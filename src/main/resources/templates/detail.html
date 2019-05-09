@@ -72,7 +72,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <ul class="nav1">
                     <li id="search">
 
-
                         <form action=""   id ="fileUploadForm" enctype="multipart/form-data">
                             <input type="text" name="search_text" id="search_text" placeholder="Search"/>
                             <input type="button" name="search_button" id="search_button"  />
@@ -80,7 +79,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                             <br/>
                             <br/>
                             <br/>
-                            <input type="file" name="file" id="file" onchange="inputImage()" display="none">
+                            <input type="file" name="file" id="file" display="none" onchange="inputImage()">
 
                         </form>
 
@@ -185,13 +184,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </div>
 </body>
 <script>
-
-
     function inputImage(){
         var formData=new FormData($("#fileUploadForm")[0]);
-        var filePath="";
+        var filePath;
         filePath=document.getElementById("file").value;
-        alert(filePath);
         formData.append("filePath",filePath);
         $.ajax({
             //提交数据的类型 POST GET
@@ -204,7 +200,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             processData: false, // 告诉jQuery不要去处理发送的数据
             contentType: false, // 告诉jQuery不要去设置Content-Type请求头            //成功返回之后调用的函数
             success:function(data){
-                alert(formData.values());
+                alert("成功")
             }   ,
             //调用出错执行的函数
             error: function(){
@@ -213,6 +209,28 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             }
         });
     }
+
+    // function upload() {
+    //     var formData = new FormData($("#form1")[0]);
+    //     var  filePath=document.getElementById("file").value;
+    //     formData.append("filePath",filePath);
+    //     $.ajax({
+    //         url: '/perception',
+    //         type: 'POST',
+    //         data: formData,
+    //         async: false,
+    //         cache: false,
+    //         contentType: false,
+    //         processData: false,
+    //         success: function(data) {
+    //             alert("成功");
+    //         },
+    //         error: function(data) {
+    //             alert("错误");
+    //         }
+    //     });
+    // }
+
 
 </script>
 </html>		
