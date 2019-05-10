@@ -4,6 +4,7 @@
     <title>Detial</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
     <meta name="keywords" content="Photo-Hub Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
 Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
     <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
@@ -62,9 +63,14 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     </div>
 </div>
 <div class="ba">
-    <div class="grid_1_d"  >
-        <img src="images/1.jpg" width="100%" height="100%" />
+    <div class="grid_1_d" href="#" >
+        <ul th:if="${session.fileName!=null}" >
+            <img src="@{/file/{fileName}(fileName=${session.fileName})}" width="100%" height="100%" />
+<!--            <img src="data:image/jpeg;base64,${session.base64}"alt="" width="100%" height="100%"/>-->
+        </ul>
+        <ul th:if="${session.fileName==null}" th:text="hello"></ul>
     </div>
+
     <div class="container" >
         <div class="span_1_of_d" >
             <h2>Cake Search by Image</h2>
@@ -80,7 +86,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                             <br/>
                             <br/>
                             <input type="file" name="file" id="file" display="none" onchange="inputImage()">
-
                         </form>
 
                     </li>
@@ -91,79 +96,77 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
     <br/>
 
-    <div class="grid_2">
+    <div class="grid_2" th:each="arrayS:${session.ImagePath}">
+
         <div class="col-md-2 col_1">
-            <h4>Gym</h4>
+            <img th:src="${arrayS}"class="img-responsive"/>
         </div>
-        <div class="col-md-2 col_1">
-            <img src="images/g1.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/g2.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/g3.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/g4.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/g5.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <h4>Food</h4>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/f1.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/pic9.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/f2.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/f3.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/f4.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <h4>Wedding</h4>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/w1.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/pic15.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/w2.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/w3.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/w4.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <h4>People</h4>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/pic20.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/pic21.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/pic22.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/pic23.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/pic24.jpg" class="img-responsive" alt=""/>
-        </div>
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/g2.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/g3.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/g4.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/g5.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <h4>Food</h4>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/f1.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/pic9.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/f2.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/f3.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/f4.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <h4>Wedding</h4>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/w1.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/pic15.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/w2.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/w3.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/w4.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <h4>People</h4>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/pic20.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/pic21.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/pic22.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/pic23.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
+<!--        <div class="col-md-2 col_1">-->
+<!--            <img src="images/pic24.jpg" class="img-responsive" alt=""/>-->
+<!--        </div>-->
         <div class="clearfix"> </div>
     </div>
 </div>
@@ -210,26 +213,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         });
     }
 
-    // function upload() {
-    //     var formData = new FormData($("#form1")[0]);
-    //     var  filePath=document.getElementById("file").value;
-    //     formData.append("filePath",filePath);
-    //     $.ajax({
-    //         url: '/perception',
-    //         type: 'POST',
-    //         data: formData,
-    //         async: false,
-    //         cache: false,
-    //         contentType: false,
-    //         processData: false,
-    //         success: function(data) {
-    //             alert("成功");
-    //         },
-    //         error: function(data) {
-    //             alert("错误");
-    //         }
-    //     });
-    // }
+
 
 
 </script>
