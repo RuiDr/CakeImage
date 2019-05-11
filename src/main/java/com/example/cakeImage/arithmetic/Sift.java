@@ -16,4 +16,8 @@ import java.beans.FeatureDescriptor;
  */
 public class Sift {
 
+//    一.构建尺度空间，检测极值点，获得尺度不变性
+//    二.特征点过滤并进行精确定位
+//    三.为每个关键点指定方向参数
+//    四.生成关键点的描述子
 }
