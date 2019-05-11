@@ -64,11 +64,19 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </div>
 <div class="ba">
     <div class="grid_1_d" href="#" >
-        <ul th:if="${session.fileName!=null}" >
-            <img src="@{/file/{fileName}(fileName=${session.fileName})}" width="100%" height="100%" />
-<!--            <img src="data:image/jpeg;base64,${session.base64}"alt="" width="100%" height="100%"/>-->
+        <ul  >
+<!--            <img src="@{/file/{fileName}(fileName=${session.fileName})}" width="100%" height="100%" />-->
+<!--            <span th:text="${session.base64Path}"></span>-->
+               <li th:if="${session.source}!=null">
+                   <span th:text="${session.source}"></span>
+                <img th:src="${session.source}"  alt="" width="100%" height="100%"/>
+               </li>
+
+            <li th:if="${session.source}==null">
+                <img src="images/source.jpg"  class="img-responsive" alt="" width="100%" height="100%"/>
+            </li>
         </ul>
-        <ul th:if="${session.fileName==null}" th:text="hello"></ul>
+
     </div>
 
     <div class="container" >

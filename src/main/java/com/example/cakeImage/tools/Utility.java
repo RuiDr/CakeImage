@@ -13,6 +13,7 @@ import java.util.Base64;
 import java.util.List;
 
 public class Utility  {
+
     static String  path="G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\";
     public static String tool(MultipartFile file, String filePath) {
 
@@ -38,7 +39,7 @@ public class Utility  {
         }
         return path+fileNameA;
     }
-
+// 计算汉明距离
     public static ArrayList<String> hammingDistance(String sourceCode, List<String> list) {
         ArrayList<String >list1=new ArrayList<>();
         int distance=0;
@@ -52,6 +53,8 @@ public class Utility  {
 //        返回的图片编号的字符串形式
         return list1;
     }
+
+//    转成base64码
     public static String urlToBase64(String path){
         String base64Img="";
         try {
@@ -61,6 +64,7 @@ public class Utility  {
             is.read(data);
             is.close();
              base64Img = Base64.getEncoder().encodeToString(data);
+//             base64Img=Base64.getUrlEncoder().encodeToString(data);
         }catch (IOException e){
             e.printStackTrace();
         }

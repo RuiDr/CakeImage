@@ -6,6 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+/**
+ * @ Author     ：CrazyCake.
+ * @ Date       ：Created in 21:00 2019/4/26
+ * @ Description：UserController
+ * @ Modified By：
+ * @Version: 1.0$
+ */
 @Controller
 public class UserController {
     @Autowired

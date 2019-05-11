@@ -6,8 +6,16 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.io.*;
+
+/**
+ * @ Author     ：CrazyCake.
+ * @ Date       ：Created in 19:27 2019/5/1
+ * @ Description：sift算法
+ * @ Modified By：
+ * @Version: 1.0$
+ */
 public class PictureProcessin {
-    public static final String path="C:/Users/CrazyCake/Pictures/testPic";
+    public static final String path="G:/java/webprojects/CakeImage/src/main/resources/static/";
     public static BufferedImage thumb(BufferedImage source,int width,int height,boolean b){
 //        targetW,targerH分别表示目标长和宽
         int type=source.getType();

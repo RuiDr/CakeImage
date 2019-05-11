@@ -93,6 +93,20 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>de.roskenet</groupId>
+            <artifactId>springboot-javafx-support</artifactId>
+            <version>2.1.6</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>de.roskenet</groupId>
+            <artifactId>springboot-javafx-test</artifactId>
+            <version>1.3.0</version>
+            <scope>test</scope>
+        </dependency>
+
 
 
 
@@ -106,11 +120,7 @@
             <artifactId>mchange-commons-java</artifactId>
             <version>0.2.11</version>
         </dependency>
-        <dependency>
-            <groupId>com.mchange</groupId>
-            <artifactId>mchange-commons-java</artifactId>
-            <version>0.2.11</version>
-        </dependency>
+
 
 
     </dependencies>

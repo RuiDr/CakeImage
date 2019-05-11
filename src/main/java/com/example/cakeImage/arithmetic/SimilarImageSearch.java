@@ -1,14 +1,25 @@
 package com.example.cakeImage.arithmetic;
+import sun.java2d.cmm.CMSManager;
+
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+/**
+ * @ Author     ：CrazyCake.
+ * @ Date       ：Created in 19:27 2019/5/1
+ * @ Description：sift算法
+ * @ Modified By：
+ * @Version: 1.0$
+ */
 public class SimilarImageSearch {
-    static String  fileName= PictureProcessin.path+"/images/";
+    static String  fileName= PictureProcessin.path+"images/";
 
-//        public static void main(String[] args) {
-//        produceAllImages(10);
-//    }
-//    训练样本集
+    /**
+     * @ Author     ：CrazyCake
+     * @ Date       ：Created in 20:04 2019/5/11
+     * @ Description：
+     * @ Return     ：
+     */
     public static List<String> produceAllImages(int count){
         List<String>hashCodes=new ArrayList<>();
         String hashCode=null;
@@ -17,31 +28,9 @@ public class SimilarImageSearch {
             hashCode = produceFingerPrint(fileName  + (i + 1) + ".jpg");
             hashCodes.add(hashCode);
         }
-
-//        System.out.println("Resources: ");
-//        System.out.println(hashCodes);
-//        System.out.println();
-//
-//        String sourceHashCode = produceFingerPrint(fileName + "source.jpg");
-//        System.out.println("Source: ");
-//        System.out.println(sourceHashCode);
-//        System.out.println();
-//        for (int i = 0; i < hashCodes.size(); i++)
-//        {
-//            int difference = hammingDistance(sourceHashCode, hashCodes.get(i));
-//            if(difference==0){
-//                System.out.println("source.jpg图片跟example"+(i+1)+".jpg一样");
-//            }else if(difference<=5){
-//                System.out.println("source.jpg图片跟example"+(i+1)+".jpg非常相似");
-//            }else if(difference<=10){
-//                System.out.println("source.jpg图片跟example"+(i+1)+".jpg有点相似");
-//            }else if(difference>10){
-//                System.out.println("source.jpg图片跟example"+(i+1)+".jpg完全不一样");
-//            }
-//            System.out.println(difference);
-//        }
         return hashCodes;
     }
+
 //    计算汉明距离
     public static int hammingDistance(String sourceHashCode,String hashCode){
         int difference=0;
