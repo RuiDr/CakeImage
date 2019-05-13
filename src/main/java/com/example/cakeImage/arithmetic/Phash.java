@@ -17,9 +17,7 @@ import java.io.File;
  */
 public class Phash {
 
-
-
-    public String pHash(String imagePath){
+    public String PHashGen(String imagePath){
         BufferedImage bufferedImage=null;
         String fingerPrint="";
         try{
@@ -78,7 +76,7 @@ public class Phash {
         width:图片宽
         heigth:图片高
      */
-    public BufferedImage resize(BufferedImage image,int width,int height){
+    public  BufferedImage resize(BufferedImage image,int width,int height){
 //      创建指定大小，指定图形类型的bufferedImage对象
         BufferedImage resizedImage=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
 //      返回Graphics对象，从而允许通过该对象向bufferedImage中添加图形
