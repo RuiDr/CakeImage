@@ -1,5 +1,4 @@
 package com.example.cakeImage.arithmetic;
-
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import javax.imageio.ImageIO;
@@ -7,7 +6,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
-
+import java.util.ArrayList;
+import java.util.List;
 /**
  * @ Author     ：CrazyCake.
  * @ Date       ：Created in 10:20 2019/5/11
@@ -16,24 +16,36 @@ import java.io.File;
  * @Version: 1.0$
  */
 public class Phash {
+    static String  fileName= PictureProcessin.path+"images/";
+//    生成phash算法的指纹集
+public static List<String> produceAllImagesPhash(int count){
 
-    public String PHashGen(String imagePath){
+    List<String >hashCodes=new ArrayList<>();
+    String hashCode=null;
+    for (int i=0;i<count;i++){
+        hashCode=Phash.PHashGen(fileName  + (i + 1) + ".jpg");
+        hashCodes.add(hashCode);
+    }
+    return hashCodes;
+}
+
+    public static String PHashGen(String imagePath){
         BufferedImage bufferedImage=null;
         String fingerPrint="";
         try{
             bufferedImage=ImageIO.read(new File(imagePath));
 //            缩小尺寸
-            bufferedImage=resize(bufferedImage,32,32);
+            bufferedImage=Phash.resize(bufferedImage,32,32);
 //            灰度变换
             bufferedImage=ImageToGray(bufferedImage);
 //            计算DCT
-            double[][]dtc=DTC(bufferedImage,32);
+            double[][]dtc=Phash.DTC(bufferedImage,32);
 //            缩小DCT
-            double [][]reDtc=reDTC(dtc,8);
+            double [][]reDtc=Phash.reDTC(dtc,8);
 //            计算平均值
-            double avg=avgDCT(reDtc,32);
+            double avg=Phash.avgDCT(reDtc,32);
 //            计算hash值
-            fingerPrint=generateHash(avg,reDtc,32);
+            fingerPrint=Phash.generateHash(avg,reDtc,32);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -69,14 +81,13 @@ public class Phash {
         }
         return result;
     }
-
     /*
         将图片缩小为指定的尺寸
         image:原始图片
         width:图片宽
         heigth:图片高
      */
-    public  BufferedImage resize(BufferedImage image,int width,int height){
+    public  static  BufferedImage resize(BufferedImage image,int width,int height){
 //      创建指定大小，指定图形类型的bufferedImage对象
         BufferedImage resizedImage=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
 //      返回Graphics对象，从而允许通过该对象向bufferedImage中添加图形
@@ -85,7 +96,6 @@ public class Phash {
         g.dispose();
         return resizedImage;
     }
-
     /*
     计算hash生成指纹
     avg:所得dtc的平均值
@@ -93,7 +103,7 @@ public class Phash {
     算法:设置0/1的64位hash值,大于avg设为1,小于avg设为0,组合在一起构成64位的整数,即为图片的指纹
     n:矩阵的大小
      */
-    public String  generateHash(double avg,double[][]original,int n){
+    public static String  generateHash(double avg,double[][]original,int n){
         String fingerPrint="";
         for (int i=0;i<n;i++){
             for (int j=0;j<n;j++){
@@ -102,13 +112,12 @@ public class Phash {
         }
         return fingerPrint;
     }
-
     /*
     计算均值
     original:缩小后的dct
     n:dct的大小
      */
-    public double avgDCT(double[][]original,int n){
+    public static double avgDCT(double[][]original,int n){
         double tatal=0;
         for (int i=0;i<n;i++){
             for (int j=0;j<n;j++){
@@ -126,7 +135,7 @@ public class Phash {
       original:原始dct
       n:缩小后的大小
      */
-    public double[][]reDTC(double [][] original,int n){
+    public static double[][]reDTC(double [][] original,int n){
         double [][]newDtc=new double[n][n];
         for (int i=0;i<n;i++){
             for (int j=0;j<n;j++){
@@ -142,7 +151,7 @@ public class Phash {
       n:原始图片大小
       return:变换后的矩阵数据
      */
-    public double[][] DTC(BufferedImage image,int n){
+    public static double[][] DTC(BufferedImage image,int n){
         double [][]iMatrix=new double[n][n];
 
         Mat mat= bufImagetoMat(image ,image.getType(),CvType.CV_32F);
@@ -154,18 +163,16 @@ public class Phash {
             }
         }
     //        求系数矩阵
-        double [][]coefficient=findCoefficient(n);
+        double [][]coefficient=Phash.findCoefficient(n);
     //        求系数矩阵的转置
-        double[][]cofficientT=transposingMatrix(coefficient,n);
+        double[][]cofficientT=Phash.transposingMatrix(coefficient,n);
         double [][]temp=new double[n][n];
     //        矩阵相乘
-        temp=matrixMultiply(coefficient,iMatrix,n);
-        iMatrix=matrixMultiply(temp,cofficientT,n);
+        temp=Phash.matrixMultiply(coefficient,iMatrix,n);
+        iMatrix=Phash.matrixMultiply(temp,cofficientT,n);
         return iMatrix;
     }
-
 //    求离散变换的系数矩阵
-
     /*
         image转换成Mat
         imgType:图片类型
@@ -185,19 +192,18 @@ public class Phash {
                g.dispose();
            }
        }
-       byte[] pixels=((DataBufferByte) original.getRaster().getDataBuffer()).getData();
+       byte[] pixels=((DataBufferByte)original.getRaster().getDataBuffer()).getData();
        Mat mat=Mat.eye(original.getHeight(),original.getWidth(),matType);
        mat.put(0,0,pixels);
        return mat;
     }
-
     /*
     矩阵相乘
     coefficient:矩阵1
     iMatrix:矩阵2
     n:大小
      */
-    private double[][] matrixMultiply(double[][] coefficient, double[][] iMatrix, int n) {
+    public static double[][] matrixMultiply(double[][] coefficient, double[][] iMatrix, int n) {
         double nMatrix[][]=new double[n][n];
         double t=0.0;
         for (int i=0;i<n;i++){
@@ -217,7 +223,7 @@ public class Phash {
       coefficient:原矩阵
       n:矩阵大小
      */
-    private double[][] transposingMatrix(double[][] coefficient, int n) {
+  public static double[][] transposingMatrix(double[][] coefficient, int n) {
         double nMatrix[][]=new double[n][n];
         for (int i=0;i<n;i++){
             for (int j=0;j<n;j++){
@@ -230,7 +236,7 @@ public class Phash {
     /*求系数矩阵
       n:矩阵大小
      */
-    private double[][] findCoefficient(int n) {
+    public static double[][] findCoefficient(int n) {
         double[][]coe=new double[n][n];
         double sqrt=1.0/Math.sqrt(n);
         for (int i=0;i<n;i++){

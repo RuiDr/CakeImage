@@ -1,6 +1,7 @@
 package com.example.cakeImage.service;
 
-import com.example.cakeImage.entity.ImagesInfo;
+import com.example.cakeImage.entity.Ahash;
+
 import com.example.cakeImage.mapper.Common;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class CommonService {
     }
 
 
-    public int addImages(ImagesInfo imagesInfo) {
+    public int addImages(Ahash imagesInfo) {
         return commonmapper.addImages(imagesInfo);
     }
 }

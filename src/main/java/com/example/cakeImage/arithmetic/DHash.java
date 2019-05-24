@@ -17,6 +17,7 @@ import static com.example.cakeImage.arithmetic.Phash.bufImagetoMat;
  * @Version: 1.0$
  */
 public class DHash {
+    static String  fileName= PictureProcessin.path+"images/";
 
     static BufferedImage image = null;
     Phash phash = new Phash();
@@ -24,7 +25,6 @@ public class DHash {
     public DHash(BufferedImage image) {
         this.image = image;
     }
-
     public String DHashGen() {
         String fingerPrint = "";
         //    1.缩小图片：收缩到9*8的大小，一遍它有72的像素点
@@ -35,7 +35,6 @@ public class DHash {
 
         return fingerPrint;
     }
-
     //    4.获得指纹：如果左边的像素比右边的更亮，则记录为1，否则为0.
     public String fingerPrint(BufferedImage image, int m, int n) {
         String fingerPrint = "";

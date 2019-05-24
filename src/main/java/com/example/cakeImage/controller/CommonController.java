@@ -1,13 +1,15 @@
 package com.example.cakeImage.controller;
 import com.example.cakeImage.arithmetic.SimilarImageSearch;
-import com.example.cakeImage.entity.ImagesInfo;
+import com.example.cakeImage.entity.Ahash;
 import com.example.cakeImage.service.CommonService;
+import com.example.cakeImage.service.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,26 +25,10 @@ public class CommonController {
     @Autowired
     public CommonService commonservice;
 
+
 //    默认页面
     @RequestMapping(value = "/", method = {RequestMethod.POST, RequestMethod.GET})
     public String login(){
-
-
-//        将文件中的图片生成指纹并保存到数据库中
-        List<String> list=new ArrayList<>();
-        list= SimilarImageSearch.produceAllImages(10);
-        for (int i=0;i<list.size();i++){
-            ImagesInfo imagesInfo=new ImagesInfo();
-            String uuid=UUID.randomUUID().toString().substring(0, 4);
-            imagesInfo.setId(uuid);
-            imagesInfo.setAddress("images/"+(i+1)+".jpg");
-            imagesInfo.setFinger(list.get(i));
-            int key=commonservice.addImages(imagesInfo);
-            System.out.println("第 "+(i+1)+"次插入图片 "+key);
-
-
-        }
-        System.out.println(list.toString());
 
 
 
@@ -90,8 +76,6 @@ public class CommonController {
     @GetMapping("/camera")
     public String camera(){
         System.out.println("hello camera");
-
-
         return "/camera";
     }
 
@@ -101,4 +85,30 @@ public class CommonController {
         return "/register";
     }
 
+//    判断用户采用的是哪种算法
+    @GetMapping ("/method")
+    public String method(@RequestParam("ids")String id, HttpSession session,HttpServletRequest request){
+
+        System.out.println("hello method");
+        String str="";
+        if(id.contains("ahash")){
+            str="ahash";
+            session.setAttribute("method",str);
+            return "/detail";
+        }else if (id.contains("phash")){
+            str="phash";
+            session.setAttribute("method",str);
+
+            return "/detail";
+        }else if (id.contains("dhash")){
+            str="dhash";
+            session.setAttribute("method",str);
+            return "/detail";
+        }
+        return "/index";
+    }
+
 }
+
+
+

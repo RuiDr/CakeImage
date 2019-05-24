@@ -20,6 +20,7 @@ public class SimilarImageSearch {
      * @ Description：
      * @ Return     ：
      */
+//    使用平均值哈希算法生成指纹
     public static List<String> produceAllImages(int count){
         List<String>hashCodes=new ArrayList<>();
         String hashCode=null;

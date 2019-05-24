@@ -1,6 +1,6 @@
 package com.example.cakeImage.entity;
 
-public class ImagesInfo {
+public class Ahash {
     public String id;
     public String address;
     public String finger;

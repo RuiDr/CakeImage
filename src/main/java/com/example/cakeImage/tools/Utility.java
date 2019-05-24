@@ -3,9 +3,7 @@ package com.example.cakeImage.tools;
 import com.example.cakeImage.arithmetic.SimilarImageSearch;
 import org.apache.commons.io.FileUtils;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
-import com.mchange.util.Base64Encoder;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,8 +11,8 @@ import java.util.Base64;
 import java.util.List;
 
 public class Utility  {
-
     static String  path="G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\";
+//    保存原图像到根目录下
     public static String tool(MultipartFile file, String filePath) {
 
         System.out.println("filePath is "+filePath);
@@ -28,12 +26,11 @@ public class Utility  {
         }
         String suf=file.getOriginalFilename().substring(file.getOriginalFilename().indexOf(".")+1);
         fileNameA="source"+"."+suf;
+//        将原图片保存在根路径下
         try{
             FileUtils.writeByteArrayToFile(new File(path + fileNameA),
                     file.getBytes());
-
             System.out.println("path is "+path+fileNameA);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
