@@ -1,10 +1,14 @@
 package com.example.cakeImage.arithmetic;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferDouble;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +44,18 @@ public static List<String> produceAllImagesPhash(int count){
             bufferedImage=ImageToGray(bufferedImage);
 //            计算DCT
             double[][]dtc=Phash.DTC(bufferedImage,32);
+            for (int i=0;i<dtc.length;i++){
+                for (int j=0;j<dtc.length;j++){
+                    System.out.println("dtc "+dtc[i][j]);
+                }
+
+            }
 //            缩小DCT
             double [][]reDtc=Phash.reDTC(dtc,8);
 //            计算平均值
-            double avg=Phash.avgDCT(reDtc,32);
+            double avg=Phash.avgDCT(reDtc,8);
 //            计算hash值
-            fingerPrint=Phash.generateHash(avg,reDtc,32);
+            fingerPrint=Phash.generateHash(avg,reDtc,8);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -154,14 +164,14 @@ public static List<String> produceAllImagesPhash(int count){
     public static double[][] DTC(BufferedImage image,int n){
         double [][]iMatrix=new double[n][n];
 
-        Mat mat= bufImagetoMat(image ,image.getType(),CvType.CV_32F);
+        iMatrix= bufImagetoMat(image ,image.getType(),CvType.CV_32F);
 
-        for (int i=0;i<n;i++){
-            double[]a=mat.get(i,0);
-            for (int j=0;j<n;j++){
-                iMatrix[i][j]=a[j];
-            }
-        }
+//        for (int i=0;i<n;i++){
+//            double[]a=mat.get(i,0);
+//            for (int j=0;j<n;j++){
+//                iMatrix[i][j]=a[j];
+//            }
+//        }
     //        求系数矩阵
         double [][]coefficient=Phash.findCoefficient(n);
     //        求系数矩阵的转置
@@ -178,24 +188,20 @@ public static List<String> produceAllImagesPhash(int count){
         imgType:图片类型
         matType:矩阵类型
      */
-    public static Mat bufImagetoMat(BufferedImage original,int imgType,int matType){
-        if (original==null){
-            throw new IllegalArgumentException("original==null");
-        }
-       if(original.getType()!=imgType){
-           BufferedImage image=new BufferedImage(original.getWidth(),original.getHeight(),imgType);
-           Graphics2D g=image.createGraphics();
-           try{
-              g.setComposite(AlphaComposite.Src);
-              g.drawImage(original,0,0,null);
-           }finally {
-               g.dispose();
-           }
-       }
-       byte[] pixels=((DataBufferByte)original.getRaster().getDataBuffer()).getData();
-       Mat mat=Mat.eye(original.getHeight(),original.getWidth(),matType);
-       mat.put(0,0,pixels);
-       return mat;
+    public static double[][] bufImagetoMat(BufferedImage original,int imgType,int matType){
+            int width=original.getWidth();
+            int height=original.getHeight();
+            int[]data=new int[width*height];
+            original.getRGB(0,0,width,height,data,0,width);
+            double [][]rgbArray=new double[height][width];
+            for (int i=0;i<height;i++){
+                for (int j=0;j<width;j++){
+                    rgbArray[i][j]=data[i*width+j];
+                }
+            }
+
+
+       return  rgbArray;
     }
     /*
     矩阵相乘

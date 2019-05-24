@@ -39,13 +39,13 @@ public class DHash {
     public String fingerPrint(BufferedImage image, int m, int n) {
         String fingerPrint = "";
         double[][] iMatrix = new double[m][n];
-        Mat mat1 = bufImagetoMat(image, image.getType(), CvType.CV_32F);
-        for (int i=0;i<n;i++){
-            double [] b=mat1.get(i,0);
-            for (int j=0;j<m;j++){
-                iMatrix[i][j]=b[j];
-            }
-        }
+        iMatrix = bufImagetoMat(image, image.getType(), CvType.CV_32F);
+//        for (int i=0;i<n;i++){
+//            double [] b=mat1.get(i,0);
+//            for (int j=0;j<m;j++){
+//                iMatrix[i][j]=b[j];
+//            }
+//        }
         for (int i=0;i<n;i++){
             for (int j=0;j<m-1;j++){
                 if(iMatrix[i][j]>iMatrix[i][j+1]){
