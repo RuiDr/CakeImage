@@ -1,11 +1,16 @@
 package com.example.cakeImage.controller;
-import com.example.cakeImage.arithmetic.Phash;
+import com.example.cakeImage.arithmetic.DHashArith;
+import com.example.cakeImage.arithmetic.PhashArith;
 import com.example.cakeImage.arithmetic.SimilarImageSearch;
 import com.example.cakeImage.entity.Ahash;
+import com.example.cakeImage.entity.Dhash;
+import com.example.cakeImage.entity.Phash;
 import com.example.cakeImage.service.CommonService;
 import com.example.cakeImage.tools.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,8 +21,8 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Map;
 
-import java.util.UUID;
 
 @Controller
 public class ArithmeticController {
@@ -27,57 +32,124 @@ public class ArithmeticController {
 
     @ResponseBody
     @RequestMapping("/perception")
-    public String perception(@RequestParam( value = "file")MultipartFile file, String filePath, HttpServletRequest request, HttpSession session){
+    public String perception(@RequestParam(value = "search_text")String  search_text, @RequestParam( value = "file")MultipartFile file, String filePath, HttpServletRequest request, HttpSession session, Model model){
 
-//            向前端发送数据
+        String sourceImagePath="";
         String method=(String) session.getAttribute("method");
         System.out.println("method is "+method);
-        String sourceImagePath="";
 
-        sourceImagePath=  Utility.tool(file,filePath);
+        session.setAttribute("message","This is your message");
+//            向前端发送数据
+        if (Utility.verifyUrl(search_text)) {
+            String[] str = search_text.split(",");
+            search_text = str[0];
+            System.out.println("text is " + search_text);
+            try {
+                sourceImagePath= Utility.download(search_text);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else if(file!=null){
+            sourceImagePath=  Utility.tool(file,filePath);
+        }else{
+            System.out.println("没有输入图片");
+        }
 //            获取原图像地址
         System.out.println("sourceImagePath is "+sourceImagePath);
-//              list用于存放平均哈希算法的指纹集
+//              存放相似集
         List<String> list=new ArrayList<>();
 
 //            使用平均值哈希算法
         if(method.contains("ahash")){
-            System.out.println("ahash 算法 ：");
-//            使用平均值哈希算法获得指纹集
-            list= SimilarImageSearch.produceAllImages(10);
-            for (int i=0;i<list.size();i++){
-                Ahash imagesInfo=new Ahash();
-                String uuid= UUID.randomUUID().toString().substring(0, 4);
-                imagesInfo.setId(uuid);
-                imagesInfo.setAddress("images/"+(i+1)+".jpg");
-                imagesInfo.setFinger(list.get(i));
-                int key=commonservice.addImages(imagesInfo);
-                System.out.println("第 "+(i+1)+"次插入图片 "+key);
-            }
 
             System.out.println(list.toString());
 
 //             获取目标图片的指纹
             String sourceCode = SimilarImageSearch.produceFingerPrint(sourceImagePath);
-            System.out.println("sourceCode is "+sourceCode);
+            System.out.println("ahash sourceCode is "+sourceCode);
+            ArrayList<Ahash>map=null;
+            map=commonservice.findAhash();
+            System.out.println("map is "+map.toString());
+            if(map!=null){
+                for (int i=0;i<map.size();i++){
+                    Ahash ahash=new Ahash();
+                    ahash=map.get(i);
+//                    计算汉明距离
+                int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
+                if (differece<=10){
+                    list.add(map.get(i).address);
+                }
 
-            session.setAttribute("source","images/source.jpg");
+                }
+                String test="123";
+
+            }
+            for (int i=0;i<list.size();i++){
+                System.out.println("相似图像为: "+list.get(i));
+            }
+            if (list.size()==0)
+                System.out.println("没有相似图像");
+
+
 //            增强的哈希算法
         }else if(method.contains("phash")){
             System.out.println("phash 算法 ：");
-            list=Phash.produceAllImagesPhash(10);
-            for(int i=0;i<list.size();i++){
-                System.out.println(""+list.get(i));
+
+            String sourceCode=PhashArith.PHashGen(sourceImagePath);
+            System.out.println("phash sourceCode is "+sourceCode);
+
+            ArrayList<Phash>map=null;
+            map=commonservice.findPhash();
+            System.out.println("map is "+map.toString());
+            if(map!=null){
+                for (int i=0;i<map.size();i++){
+                    Phash phash=new Phash();
+                    phash=map.get(i);
+//                    计算汉明距离
+                    int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
+                    if (differece<=10){
+                        list.add(map.get(i).address);
+                    }
+                }
+
             }
+
+            for (int i=0;i<list.size();i++){
+                System.out.println("相似图像为: "+list.get(i));
+            }
+            if (list.size()==0)
+                System.out.println("没有相似图像");
+
 
 //            差异值哈希算法
         }else if(method.contains("dhash")){
+        System.out.println("dhash算法");
 
+            String sourceCode= DHashArith.DHashGen(sourceImagePath);
+            System.out.println("dhash sourceCode is "+sourceCode);
 
-
+            ArrayList<Dhash>map=null;
+            map=commonservice.findDhash();
+            System.out.println("map is "+map.toString());
+            if(map!=null){
+                for (int i=0;i<map.size();i++){
+                    Dhash dhash=new Dhash();
+                    dhash=map.get(i);
+//                    计算汉明距离
+                    int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
+                    if (differece<=10){
+                        list.add(map.get(i).address);
+                    }
+                }
+            }
+            for (int i=0;i<list.size();i++){
+                System.out.println("相似图像为: "+list.get(i));
+            }
+            if (list.size()==0)
+                System.out.println("没有相似图像");
+        }else{
+            return "/index";
         }
-
-
         return "/detail";
     }
 }

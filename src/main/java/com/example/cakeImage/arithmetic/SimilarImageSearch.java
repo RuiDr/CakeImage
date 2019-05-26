@@ -82,7 +82,7 @@ public class SimilarImageSearch {
       return hashCode.toString();
     }
 //    二进制转为十六进制
-    private static char binaryToHex(int binary){
+    public static char binaryToHex(int binary){
         char ch=' ';
         switch (binary){
             case 0:

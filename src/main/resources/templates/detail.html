@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Detial</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,10 +15,15 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <link href="css/style.css" rel='stylesheet' type='text/css' />
     <!-- Custom Theme files -->
     <!--webfont-->
+
     <link href='http://fonts.useso.com/css?family=Quicksand:300,400,700' rel='stylesheet' type='text/css'>
     <link href='http://fonts.useso.com/css?family=Open+Sans:300,400,600,700,800' rel='stylesheet' type='text/css'>
     <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="js/baguetteBox.min.js"></script>
     <script src="js/menu_jquery.js"></script>
+    <script src="https://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
 <style>
@@ -65,20 +71,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <div class="ba">
     <div class="grid_1_d" href="#" >
         <ul  >
-<!--            <img src="@{/file/{fileName}(fileName=${session.fileName})}" width="100%" height="100%" />-->
-<!--            <span th:text="${session.base64Path}"></span>-->
-               <li th:if="${session.source}!=null">
-<!--                   <span th:text="${session.source}"></span>-->
-                <img th:src=""  alt="显示原图" width="100%" height="100%"/>
-               </li>
+                <img id="img" src="" alt="显示原图" width="100%" height="100%"/>
 
-            <li th:if="${session.source}==null">
-                <img src=""  class="img-responsive" alt="" width="100%" height="100%"/>
-            </li>
         </ul>
-
     </div>
-
     <div class="container" >
         <div class="span_1_of_d" >
             <h2>Cake Search by Image</h2>
@@ -87,9 +83,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                     <li id="search">
 
                         <form action=""   id ="fileUploadForm" enctype="multipart/form-data">
-                            <input type="text" name="search_text" id="search_text" placeholder="Search"/>
+                            <input type="text" name="search_text" id="search_text" placeholder="粘贴图像" onchange="contain()"/>
+<!--                            <a href="" download="w3logo.jpg">加后缀即可</a>-->
                             <input type="button" name="search_button" id="search_button"  />
-                            <input type="button" name="camera_button" id="camera_button" onclick="window.location.href='/camera'">
+<!--                            <input type="button" name="camera_button" id="camera_button" onclick="window.location.href='/camera'">-->
                             <br/>
                             <br/>
                             <br/>
@@ -101,83 +98,36 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             </div>
         </div>
     </div>
-
     <br/>
+    <div class="grid_1">
+        <div class="container gallery-container">
+            <div class="tz-gallery">
+                <div class="row">
+                    <div class="col-sm-6 col-md-4"  >
+                    <ul >
+                        <p th:text="${session.message}">default message</p>
 
-    <div class="grid_2" th:each="arrayS:${session.ImagePath}">
+                        <div class="thumbnail" >
+                            <a class="lightbox">
+                                <img src="" alt="Park">
+                            </a>
+                        </div>
+                    </ul>
+                    </div>
+                    <div class="col-sm-6 col-md-4" >
+                        <ul >
+                        <div class="thumbnail">
+                            <a class="lightbox" href="emotionImages/1.jpg">
+                                <img src="emotionImages/1.jpg" alt="Traffic">
+                            </a>
+                        </div>
+                        </ul>
+                    </div>
+                </div>
 
-        <div class="col-md-2 col_1">
-            <img th:src="${arrayS}"class="img-responsive"/>
+            </div>
         </div>
-        <div class="col-md-2 col_1">
-            <img src="images/g2.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/g3.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/g4.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/g5.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <h4>Food</h4>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/f1.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/pic9.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/f2.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/f3.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/f4.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <h4>Wedding</h4>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/w1.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/pic15.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/w2.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/w3.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/w4.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <h4>People</h4>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/pic20.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/pic21.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/pic22.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/pic23.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="col-md-2 col_1">
-            <img src="images/pic24.jpg" class="img-responsive" alt=""/>
-        </div>
-        <div class="clearfix"> </div>
     </div>
-</div>
 <div class="grid_3">
     <div class="container">
         <ul id="footer-links">
@@ -193,12 +143,40 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         <p>Copyright &copy; 2015.Company name All rights reserved.<a target="_blank" href="http://sc.chinaz.com/moban/">&#x7F51;&#x9875;&#x6A21;&#x677F;</a></p>
     </div>
 </div>
+</div>
 </body>
 <script>
+    function contain(){
+        var formData=new FormData($("#fileUploadForm")[0]);
+        var search_text=document.getElementById("search_text").value;
+        $('#img').attr('src',search_text);
+        $.ajax({
+            //提交数据的类型 POST GET
+            type:"POST",
+            //提交的网址
+            url:"/perception",
+            //提交的数据
+            data:formData,
+            //返回数据的格式
+            processData: false, // 告诉jQuery不要去处理发送的数据
+            contentType: false, // 告诉jQuery不要去设置Content-Type请求头            //成功返回之后调用的函数
+            success:function(data){
+                alert("成功")
+            }   ,
+            //调用出错执行的函数
+            error: function(){
+                //请求出错处理
+                alert("出错")
+            }
+        });
+        alert(search_text);
+    }
     function inputImage(){
         var formData=new FormData($("#fileUploadForm")[0]);
         var filePath;
         filePath=document.getElementById("file").value;
+
+        alert("filepath"+filePath);
         formData.append("filePath",filePath);
         $.ajax({
             //提交数据的类型 POST GET
@@ -221,6 +199,20 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         });
     }
 
+
+    $('#file').on('change',function(){
+        var filePath = $(this).val(),         //获取到input的value，里面是文件的路径
+            fileFormat = filePath.substring(filePath.lastIndexOf(".")).toLowerCase(),
+            src = window.URL.createObjectURL(this.files[0]); //转成可以在本地预览的格式
+
+        // 检查是否是图片
+        if( !fileFormat.match(/.png|.jpg|.jpeg/) ) {
+            error_prompt_alert('上传错误,文件格式必须为：png/jpg/jpeg');
+            return;
+        }
+
+        $('#img').attr('src',src);
+    });
 
 
 

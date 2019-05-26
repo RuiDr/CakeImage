@@ -3,12 +3,17 @@ package com.example.cakeImage.tools;
 import com.example.cakeImage.arithmetic.SimilarImageSearch;
 import org.apache.commons.io.FileUtils;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utility  {
     static String  path="G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\";
@@ -67,4 +72,50 @@ public class Utility  {
         }
         return base64Img;
     }
+//    图片下载
+    public static String download(String fileUrl)  {
+        String filepath="E:" + File.separator + "eee.jpg";
+        try {
+            System.out.println("fileUr is "+fileUrl);
+            URL url = new URL(fileUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(5 * 1000);
+            InputStream inputStream=null;
+            if (connection.getResponseCode() == 200) {
+
+              inputStream = connection.getInputStream();
+                System.out.println(inputStream.available());
+            }
+            byte[] tmp = new byte[1024];
+            int length;
+
+            OutputStream outputStream = new FileOutputStream(filepath);
+            while ((length = inputStream.read(tmp)) != -1) {
+                System.out.println("length is "+length);
+                outputStream.write(tmp, 0, length);
+            }
+            outputStream.close();
+            inputStream.close();
+        } catch (Exception e) {
+          System.out.println(); e.printStackTrace();
+        }
+        return filepath;
+    }
+//  url判断
+    public static boolean verifyUrl(String url){
+
+        // URL验证规则
+        String regEx ="[a-zA-z]+://[^\\s]*";
+        // 编译正则表达式
+        Pattern pattern = Pattern.compile(regEx);
+        // 忽略大小写的写法
+        // Pattern pat = Pattern.compile(regEx, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(url);
+        // 字符串是否与正则表达式相匹配
+        boolean rs = matcher.matches();
+        return rs;
+
+    }
+
+
 }

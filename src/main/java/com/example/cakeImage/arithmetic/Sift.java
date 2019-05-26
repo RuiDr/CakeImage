@@ -55,7 +55,6 @@ public class Sift {
         }
         return  result;
     }
-
     /**
      * @ Author     ：CrazyCake
      * @ Date       ：Created in 21:51 2019/5/23

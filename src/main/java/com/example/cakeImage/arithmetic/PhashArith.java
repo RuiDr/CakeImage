@@ -1,14 +1,8 @@
 package com.example.cakeImage.arithmetic;
 import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferDouble;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +13,7 @@ import java.util.List;
  * @ Modified By：
  * @Version: 1.0$
  */
-public class Phash {
+public class PhashArith {
     static String  fileName= PictureProcessin.path+"images/";
 //    生成phash算法的指纹集
 public static List<String> produceAllImagesPhash(int count){
@@ -27,7 +21,7 @@ public static List<String> produceAllImagesPhash(int count){
     List<String >hashCodes=new ArrayList<>();
     String hashCode=null;
     for (int i=0;i<count;i++){
-        hashCode=Phash.PHashGen(fileName  + (i + 1) + ".jpg");
+        hashCode= PhashArith.PHashGen(fileName  + (i + 1) + ".jpg");
         hashCodes.add(hashCode);
     }
     return hashCodes;
@@ -39,23 +33,18 @@ public static List<String> produceAllImagesPhash(int count){
         try{
             bufferedImage=ImageIO.read(new File(imagePath));
 //            缩小尺寸
-            bufferedImage=Phash.resize(bufferedImage,32,32);
+            bufferedImage= PhashArith.resize(bufferedImage,32,32);
 //            灰度变换
             bufferedImage=ImageToGray(bufferedImage);
 //            计算DCT
-            double[][]dtc=Phash.DTC(bufferedImage,32);
-            for (int i=0;i<dtc.length;i++){
-                for (int j=0;j<dtc.length;j++){
-                    System.out.println("dtc "+dtc[i][j]);
-                }
-
-            }
+            double[][]dtc= PhashArith.DTC(bufferedImage,32);
 //            缩小DCT
-            double [][]reDtc=Phash.reDTC(dtc,8);
+            double [][]reDtc= PhashArith.reDTC(dtc,8);
 //            计算平均值
-            double avg=Phash.avgDCT(reDtc,8);
+            double avg= PhashArith.avgDCT(reDtc,8);
 //            计算hash值
-            fingerPrint=Phash.generateHash(avg,reDtc,8);
+            fingerPrint= PhashArith.generateHash(avg,reDtc,8);
+            System.out.println("fingerPrint is "+fingerPrint);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -114,13 +103,20 @@ public static List<String> produceAllImagesPhash(int count){
     n:矩阵的大小
      */
     public static String  generateHash(double avg,double[][]original,int n){
-        String fingerPrint="";
+//        获得二进制的指纹
+       int [] finger=new int[n*n];
         for (int i=0;i<n;i++){
             for (int j=0;j<n;j++){
-                fingerPrint+=(original[i][j]>avg?"0":"1");
+                finger[i*n+j]=(original[i][j]>avg? 0:1);
             }
         }
-        return fingerPrint;
+//      将二进制转换成十六进制
+        StringBuffer hashCode=new StringBuffer();
+        for (int i=0;i<finger.length;i+=4){
+                int result=finger[i]*(int)Math.pow(2,3)+finger[i+1]*(int)Math.pow(2,2)+finger[i + 2] * (int) Math.pow(2, 1) + finger[i + 3];
+            hashCode.append(SimilarImageSearch.binaryToHex(result));
+        }
+        return hashCode.toString();
     }
     /*
     计算均值
@@ -173,13 +169,13 @@ public static List<String> produceAllImagesPhash(int count){
 //            }
 //        }
     //        求系数矩阵
-        double [][]coefficient=Phash.findCoefficient(n);
+        double [][]coefficient= PhashArith.findCoefficient(n);
     //        求系数矩阵的转置
-        double[][]cofficientT=Phash.transposingMatrix(coefficient,n);
+        double[][]cofficientT= PhashArith.transposingMatrix(coefficient,n);
         double [][]temp=new double[n][n];
     //        矩阵相乘
-        temp=Phash.matrixMultiply(coefficient,iMatrix,n);
-        iMatrix=Phash.matrixMultiply(temp,cofficientT,n);
+        temp= PhashArith.matrixMultiply(coefficient,iMatrix,n);
+        iMatrix= PhashArith.matrixMultiply(temp,cofficientT,n);
         return iMatrix;
     }
 //    求离散变换的系数矩阵
@@ -255,4 +251,5 @@ public static List<String> produceAllImagesPhash(int count){
         }
         return coe;
     }
+
 }
