@@ -1,15 +1,11 @@
 package com.example.cakeImage.arithmetic;
-
-
 import org.opencv.core.CvType;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.example.cakeImage.arithmetic.PhashArith.ImageToGray;
 import static com.example.cakeImage.arithmetic.PhashArith.bufImagetoMat;
 
@@ -34,7 +30,6 @@ public class DHashArith {
         }
         return hashCodes;
     }
-
 
     public static String DHashGen(String filePath) {
         BufferedImage bufferedImage=null;

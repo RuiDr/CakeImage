@@ -118,4 +118,17 @@ public class Utility  {
     }
 
 
+    public static boolean isExtreneValue(double[] values, double keyValue) {
+//        极大值
+        for (double v:values){
+            if(keyValue<=v)
+                return false;
+        }
+//        极小值
+        for (double v:values){
+            if(keyValue>=v)
+                return false;
+        }
+        return true;
+    }
 }
