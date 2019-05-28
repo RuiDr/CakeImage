@@ -2,6 +2,7 @@ package com.example.cakeImage.arithmetic;
 
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -24,10 +25,10 @@ public class MyPoint {
 //    关键点方向
     private double theta;
 //    特征向量---梯度分布统计
-    private double[]grads;
+    private ArrayList<Double>grads;
 //    是否匹配过了
     private boolean isMatched;
-    public MyPoint(int x,int y,int s,int octave,double theta,double[]grads,boolean isMatch){
+    public MyPoint(int x,int y,int s,int octave,double theta,ArrayList<Double>grads,boolean isMatch){
         this.x=x;
         this.y=y;
         this.s=s;
@@ -51,7 +52,7 @@ public class MyPoint {
                 ", s=" + s +
                 ", octave=" + octave +
                 ", theta=" + theta +
-                ", grads=" + Arrays.toString(grads) +
+                ", grads=" + grads +
                 ", isMatched=" + isMatched +
                 '}';
     }
@@ -84,9 +85,7 @@ public class MyPoint {
         this.theta = theta;
     }
 
-    public void setGrads(double[] grads) {
-        this.grads = grads;
-    }
+
 
     public void setMatched(boolean matched) {
         isMatched = matched;
@@ -120,8 +119,12 @@ public class MyPoint {
         return theta;
     }
 
-    public double[] getGrads() {
+    public ArrayList<Double> getGrads() {
         return grads;
+    }
+
+    public void setGrads(ArrayList<Double> grads) {
+        this.grads = grads;
     }
 
     public boolean isMatched() {
