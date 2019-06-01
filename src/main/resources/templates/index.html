@@ -28,6 +28,25 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<link rel="stylesheet" href="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
+<style>
+	button {
+		width: 200px;
+		padding:8px;
+		background-color: rgba(255, 255, 255, 0);
+		border-color: #357ebd;
+		color: #fff;
+		-moz-border-radius: 10px;
+		-webkit-border-radius: 10px;
+		border-radius: 10px; /* future proofing */
+		-khtml-border-radius: 10px; /* for old Konqueror browsers */
+		text-align: center;
+		vertical-align: middle;
+		border: 1px solid transparent;
+		font-weight: 900;
+		font-size:125%
+	}
+
+</style>
 <div class="header">
 	<div class="container">
 		<div class="logo">
@@ -71,9 +90,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<div class="span_1_of_1">
 			<h2>Cake Search by Image</h2>
 			<form id="form">
-				<button type="button" id="1" onclick="ahash()" >aHash</button>
-				<button type="button" id="2" onclick="phash()">PHash</button>
-				<button type="button" id="3" onclick="dhash()" >DHash</button>
+				<button type="button" id="1" onclick="ahash()" >Average Hash </button>
+				<button type="button" id="2" onclick="phash()">Hash Algorithm</button>
+				<button type="button" id="3" onclick="dhash()" >Difference Hash</button>
 			</form>
 		</div>
 	</div>

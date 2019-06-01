@@ -116,7 +116,7 @@ public class CommonController {
             list= PhashArith.produceAllImagesPhash(150);
             for (int i=0;i<list.size();i++){
                 String string=commonservice.PhashByAddress("images/"+(i+1)+".jpg");
-                if(string==null) {
+                if(string==null&&list.get(i)!=null) {
                     Phash phash = new Phash();
                     String uuid = UUID.randomUUID().toString().substring(0, 4);
                     phash.setId(uuid);
@@ -135,7 +135,7 @@ public class CommonController {
 
             for (int i=0;i<list.size();i++){
                 String string=commonservice.DhashByAddress("images/"+(i+1)+".jpg");
-                if(string==null) {
+                if(string==null&&list.get(i)!=null) {
                     Dhash dhash = new Dhash();
                     String uuid = UUID.randomUUID().toString().substring(0, 4);
                     dhash.setId(uuid);

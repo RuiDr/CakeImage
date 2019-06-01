@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -32,12 +34,13 @@ public class ArithmeticController {
 
     @ResponseBody
     @RequestMapping("/perception")
-    public String perception(@RequestParam(value = "search_text")String  search_text, @RequestParam( value = "file")MultipartFile file, String filePath, HttpServletRequest request, HttpSession session, Model model){
+    public ArrayList<String> perception(@RequestParam(value = "search_text")String  search_text, @RequestParam( value = "file")MultipartFile file, String filePath, HttpServletRequest request, HttpSession session, Model model){
 
         String sourceImagePath="";
         String method=(String) session.getAttribute("method");
         System.out.println("method is "+method);
 
+        ArrayList<String >list=new ArrayList<>();
         session.setAttribute("message","This is your message");
 //            向前端发送数据
         if (Utility.verifyUrl(search_text)) {
@@ -62,8 +65,7 @@ public class ArithmeticController {
 //            使用平均值哈希算法
         if(method.contains("ahash")){
 
-            List<Ahash> similarList=new ArrayList<>();
-            System.out.println(similarList.toString());
+
 
 //             获取目标图片的指纹
             String sourceCode = SimilarImageSearch.produceFingerPrint(sourceImagePath);
@@ -78,8 +80,8 @@ public class ArithmeticController {
                     ahash=map.get(i);
 //                    计算汉明距离
                 int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
-                if (differece<=13){
-                    similarList.add(ahash);
+                if (differece<=10){
+                    list.add(ahash.address);
                 }
 
                 }
@@ -87,11 +89,11 @@ public class ArithmeticController {
 
 
             }
-            model.addAttribute("similarList",similarList);
-            for (int i=0;i<similarList.size();i++){
-                System.out.println("相似图像为: "+similarList.get(i).toString());
+
+            for (int i=0;i<list.size();i++){
+                System.out.println("相似图像为: "+list.get(i));
             }
-            if (similarList.size()==0)
+            if (list.size()==0)
                 System.out.println("没有相似图像");
 
 
@@ -112,14 +114,14 @@ public class ArithmeticController {
                     phash=map.get(i);
 //                    计算汉明距离
                     int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
-                    if (differece<=10){
-                        similarList.add(phash);
+                    if (differece<=12){
+                        list.add(phash.address);
                     }
                 }
             }
-            model.addAttribute("similarList",similarList);
-            for (int i=0;i<similarList.size();i++){
-                System.out.println("相似图像为: "+similarList.get(i).address);
+
+            for (int i=0;i<list.size();i++){
+                System.out.println("相似图像为: "+list.get(i));
             }
             if (similarList.size()==0)
                 System.out.println("没有相似图像");
@@ -142,21 +144,21 @@ public class ArithmeticController {
                     dhash=map.get(i);
 //                    计算汉明距离
                     int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
-                    if (differece<=10){
-                        similarList.add(dhash);
+                    if (differece<=11){
+                        list.add(dhash.address);
                     }
                 }
             }
-            model.addAttribute("list",similarList);
+
             for (int i=0;i<similarList.size();i++){
                 System.out.println("相似图像为: "+similarList.get(i));
             }
             if (similarList.size()==0)
                 System.out.println("没有相似图像");
         }else{
-            return "/index";
+            return list;
         }
 
-        return "/detail";
+        return list;
     }
 }

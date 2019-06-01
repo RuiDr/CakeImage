@@ -25,6 +25,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <link rel="stylesheet" href="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
+
 <style>
     input[type="file"] {
         color: transparent;
@@ -37,7 +38,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         </div>
         <div class="top_right">
             <ul th:if="${session.username}!=null" th:text="${session.username}">
-
             </ul>
             <ul th:if="${session.username}==null">
                 <li><a href="/register">Register</a></li>|
@@ -70,7 +70,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <div class="ba">
     <div class="grid_1_d" href="#" >
         <ul  >
-                <img id="img" src="" alt="请上传图片哦" width="100%" height="100%"/>
+                <img id="img" src="/images/1.jpg" alt="" width="100%" height="100%"/>
         </ul>
     </div>
     <div class="container" >
@@ -100,25 +100,25 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <div class="grid_1">
         <div class="container gallery-container">
             <div class="tz-gallery">
-                <div class="row">
-                    <div class="col-sm-6 col-md-4"  >
-                    <ul th:each="str : ${similarList}">
-                        <div class="thumbnail" >
-                            <a class="lightbox">
-                                <img th:src="@{/images/gtvglogo.png}" >
-                            </a>
-                        </div>
-                    </ul>
+                <div id="showResult">
+                    <div class="row" >
+<!--                        <ul th:each="str : ${session.similarList}"  class="col-sm-6 col-md-4" >-->
+<!--                            <div class="thumbnail" >-->
+<!--                                <a class="lightbox">-->
+<!--                                    <img th:src="@{${str.address}}"/>-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </ul>-->
                     </div>
-                    <div class="col-sm-6 col-md-4" >
-                        <ul >
-                        <div class="thumbnail">
-                            <a class="lightbox" href="emotionImages/1.jpg">
-                                <img src="emotionImages/1.jpg" alt="Traffic">
-                            </a>
-                        </div>
-                        </ul>
-                    </div>
+<!--                    <div class="col-sm-6 col-md-4" >-->
+<!--                        <ul >-->
+<!--                        <div class="thumbnail">-->
+<!--                            <a class="lightbox" href="emotionImages/1.jpg">-->
+<!--                                <img src="emotionImages/1.jpg" alt="Traffic">-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                        </ul>-->
+<!--                    </div>-->
                 </div>
 
             </div>
@@ -171,8 +171,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         var formData=new FormData($("#fileUploadForm")[0]);
         var filePath;
         filePath=document.getElementById("file").value;
-
-        alert("filepath"+filePath);
+        var html = ""
+        // alert("filepath"+filePath);
         formData.append("filePath",filePath);
         $.ajax({
             //提交数据的类型 POST GET
@@ -185,7 +185,24 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             processData: false, // 告诉jQuery不要去处理发送的数据
             contentType: false, // 告诉jQuery不要去设置Content-Type请求头            //成功返回之后调用的函数
             success:function(data){
-                alert("成功")
+                console.log(data)
+                // alert("成功")
+                // <ul th:each="str : ${session.similarList}"  class="col-sm-6 col-md-4" >
+                //     <div class="thumbnail" >
+                //     <a class="lightbox">
+                //     <img th:src="@{${str.address}}"/>
+                //     </a>
+                //     </div>
+                //     </ul>
+                debugger
+                html = " "
+                $("#showList").remove();
+                for (var i=0;i<data.length;i++) {
+                    html += "<ul class='col-sm-6 col-md-4'> <div class='thumbnail'><a class='lightbox'><img src="+ data[i]+" alt='图片加载错误'></a></div></ul>"
+                }
+                var res = "<div id='showList'>"+html+"</div>"
+
+                $('#showResult').append(res);
             }   ,
             //调用出错执行的函数
             error: function(){
@@ -195,19 +212,25 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         });
     }
 
-
+    $(function(){
+        debugger
+        var a = localStorage.getItem('currentImg')
+        $('#img').attr('src',a);
+    });
     $('#file').on('change',function(){
         var filePath = $(this).val(),         //获取到input的value，里面是文件的路径
             fileFormat = filePath.substring(filePath.lastIndexOf(".")).toLowerCase(),
             src = window.URL.createObjectURL(this.files[0]); //转成可以在本地预览的格式
-
+            localStorage.setItem('currentImg', src);
         // 检查是否是图片
         if( !fileFormat.match(/.png|.jpg|.jpeg/) ) {
             error_prompt_alert('上传错误,文件格式必须为：png/jpg/jpeg');
             return;
         }
-
-        $('#img').attr('src',src);
+        debugger
+        var a = localStorage.getItem('currentImg')
+        $('#img').attr('src',a);
+        // window.location.reload();
     });
 
 
