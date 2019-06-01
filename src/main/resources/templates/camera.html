@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <title>摄像头获取</title>
+    <style type="text/css">
+    </style>
+    <body>
+        <video id="video" muted autoplay="" style="width: 600px ;height: 800px "></video>
+        <button id="picture">PICTURE</button>
+        <div class="container">
+            <canvas id="canvas" width="480" height="320" ></canvas>
+        </div>
+        <img  id ="image2" src="" alt="" />
+    </body>
+    <script>
+            var video=document.getElementById("video")
+            var can=document.getElementById("canvas")
+            var context=canvas.getContext("2d")
+            var errocb=function(){
+                console.log("sth wrong!");
+            }        
+            if(navigator.getUserMedia){
+                navigator.getUserMedia({"video":true},function(stream){
+                    video.srcObject=stream;
+                        video.play();
+                       
+               },errocb);
+            }else if(navigator.webkitGetUserMedia){
+                navigator.webkitGetUserMedia({"video":true},function(stream){
+                    video.srcObject=window.wenkitURL.creatObjectURL(stream);
+                    video.play();
+                },errocb);
+            }
+            document.getElementById("picture").addEventListener("click",function(){
+                video.muted=false;
+                context.drawImage(video,0,0,640,480);
+            // document.getElementById("image2").src=convertCanvasToImage(can)
+            var image3=document.getElementById("image2")
+            var imageData=can.toDataURL("image/png")
+            image3.src=imageData;
+        
+        // //从canvas中提取图片image
+        // function convertCanvasToImage(canvas) {
+        //     //新Image对象，可以理解为DOM
+        //     var image = new Image();
+        //     // canvas.toDataURL 返回的是一串Base64编码的URL，当然,浏览器自己肯定支持
+        //     // 指定格式PNG
+        //     image.src = canvas.toDataURL("image/png");
+        //     return image;
+        //     }
+            });           
+        </script>
+</html>

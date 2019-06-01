@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.io.*;
+import java.net.URLDecoder;
 
 /**
  * @ Author     ：CrazyCake.
@@ -62,9 +63,12 @@ public class PictureProcessin {
      */
     public static BufferedImage readPNGImage(String filename)
     {
+        BufferedImage sourceImage=null;
         try {
             File inputFile = new File(filename);
-            BufferedImage sourceImage = ImageIO.read(inputFile);
+           if (inputFile!=null) {
+                sourceImage = ImageIO.read(inputFile);
+           }
             return sourceImage;
         } catch (FileNotFoundException e) {
             e.printStackTrace();

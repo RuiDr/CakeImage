@@ -57,12 +57,13 @@ public class ArithmeticController {
 //            获取原图像地址
         System.out.println("sourceImagePath is "+sourceImagePath);
 //              存放相似集
-        List<String> list=new ArrayList<>();
+
 
 //            使用平均值哈希算法
         if(method.contains("ahash")){
 
-            System.out.println(list.toString());
+            List<Ahash> similarList=new ArrayList<>();
+            System.out.println(similarList.toString());
 
 //             获取目标图片的指纹
             String sourceCode = SimilarImageSearch.produceFingerPrint(sourceImagePath);
@@ -70,29 +71,33 @@ public class ArithmeticController {
             ArrayList<Ahash>map=null;
             map=commonservice.findAhash();
             System.out.println("map is "+map.toString());
+
             if(map!=null){
                 for (int i=0;i<map.size();i++){
                     Ahash ahash=new Ahash();
                     ahash=map.get(i);
 //                    计算汉明距离
                 int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
-                if (differece<=10){
-                    list.add(map.get(i).address);
+                if (differece<=13){
+                    similarList.add(ahash);
                 }
 
                 }
                 String test="123";
 
+
             }
-            for (int i=0;i<list.size();i++){
-                System.out.println("相似图像为: "+list.get(i));
+            model.addAttribute("similarList",similarList);
+            for (int i=0;i<similarList.size();i++){
+                System.out.println("相似图像为: "+similarList.get(i).toString());
             }
-            if (list.size()==0)
+            if (similarList.size()==0)
                 System.out.println("没有相似图像");
 
 
 //            增强的哈希算法
         }else if(method.contains("phash")){
+            List<Phash> similarList=new ArrayList<>();
             System.out.println("phash 算法 ：");
 
             String sourceCode=PhashArith.PHashGen(sourceImagePath);
@@ -108,21 +113,21 @@ public class ArithmeticController {
 //                    计算汉明距离
                     int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
                     if (differece<=10){
-                        list.add(map.get(i).address);
+                        similarList.add(phash);
                     }
                 }
-
             }
-
-            for (int i=0;i<list.size();i++){
-                System.out.println("相似图像为: "+list.get(i));
+            model.addAttribute("similarList",similarList);
+            for (int i=0;i<similarList.size();i++){
+                System.out.println("相似图像为: "+similarList.get(i).address);
             }
-            if (list.size()==0)
+            if (similarList.size()==0)
                 System.out.println("没有相似图像");
 
 
 //            差异值哈希算法
         }else if(method.contains("dhash")){
+            List<Dhash> similarList=new ArrayList<>();
         System.out.println("dhash算法");
 
             String sourceCode= DHashArith.DHashGen(sourceImagePath);
@@ -138,18 +143,20 @@ public class ArithmeticController {
 //                    计算汉明距离
                     int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
                     if (differece<=10){
-                        list.add(map.get(i).address);
+                        similarList.add(dhash);
                     }
                 }
             }
-            for (int i=0;i<list.size();i++){
-                System.out.println("相似图像为: "+list.get(i));
+            model.addAttribute("list",similarList);
+            for (int i=0;i<similarList.size();i++){
+                System.out.println("相似图像为: "+similarList.get(i));
             }
-            if (list.size()==0)
+            if (similarList.size()==0)
                 System.out.println("没有相似图像");
         }else{
             return "/index";
         }
+
         return "/detail";
     }
 }

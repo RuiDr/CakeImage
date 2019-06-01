@@ -2,6 +2,7 @@ package com.example.cakeImage.arithmetic;
 
 
 import java.awt.image.BufferedImage;
+import java.nio.BufferOverflowException;
 import java.util.ArrayList;
 import java.util.List;
 /**
@@ -46,10 +47,17 @@ public class SimilarImageSearch {
 //    生成图片指纹
     public static String produceFingerPrint(String filename){
         System.out.println("filename is "+filename);
-        BufferedImage source=PictureProcessin.readPNGImage(filename);//读文件
+        BufferedImage source=null;
+        try {
+             source = PictureProcessin.readPNGImage(filename);//读文件
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         int width=8;
         int height=8;
 //        第一步，缩小尺寸
+        if (source==null)
+            return null;
         BufferedImage thumb=PictureProcessin.thumb(source,width,height,false);
 //        第二步，简化色彩
 //        将缩小后的图片，转为64级灰度，也就是说，所有像素点总共只有64种颜色.

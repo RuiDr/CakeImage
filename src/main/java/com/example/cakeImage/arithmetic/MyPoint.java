@@ -4,6 +4,7 @@ import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * @ Author     ：CrazyCake
@@ -26,9 +27,11 @@ public class MyPoint {
     private double theta;
 //    特征向量---梯度分布统计
     private ArrayList<Double>grads;
+//    描述子
+    private HashMap<Integer,double[]> list;
 //    是否匹配过了
     private boolean isMatched;
-    public MyPoint(int x,int y,int s,int octave,double theta,ArrayList<Double>grads,boolean isMatch){
+    public MyPoint(int x,int y,int s,int octave,double theta,ArrayList<Double>grads,boolean isMatch,HashMap<Integer,double[]> list){
         this.x=x;
         this.y=y;
         this.s=s;
@@ -36,6 +39,7 @@ public class MyPoint {
         this.grads=grads;
         this.theta=theta;
         this.isMatched=isMatch;
+        this.list=list;
     }
 //    默认构造函数
     public MyPoint(){
@@ -53,8 +57,17 @@ public class MyPoint {
                 ", octave=" + octave +
                 ", theta=" + theta +
                 ", grads=" + grads +
+                ", list=" + list +
                 ", isMatched=" + isMatched +
                 '}';
+    }
+
+    public HashMap<Integer, double[]> getList() {
+        return list;
+    }
+
+    public void setList(HashMap<Integer, double[]> list) {
+        this.list = list;
     }
 
     public void setPreX(int preX) {

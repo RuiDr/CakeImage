@@ -95,11 +95,11 @@ public class CommonController {
 //            建立平均值指纹集
             System.out.println("ahash 算法 ：");
 //            使用平均值哈希算法获得指纹集
-            list= SimilarImageSearch.produceAllImages(10);
+            list= SimilarImageSearch.produceAllImages(150);
 //            向数据库中添加指纹集，首先判断数据库中是否存在该图像的指纹
             for (int i=0;i<list.size();i++){
                 String string=commonservice.AhashByAddress("images/"+(i+1)+".jpg");
-                if(string==null) {
+                if(string==null&&list.get(i)!=null) {
                     Ahash imagesInfo = new Ahash();
                     String uuid = UUID.randomUUID().toString().substring(0, 4);
                     imagesInfo.setId(uuid);
@@ -113,7 +113,7 @@ public class CommonController {
         }else if (id.contains("phash")){
             str="phash";
             session.setAttribute("method",str);
-            list= PhashArith.produceAllImagesPhash(10);
+            list= PhashArith.produceAllImagesPhash(150);
             for (int i=0;i<list.size();i++){
                 String string=commonservice.PhashByAddress("images/"+(i+1)+".jpg");
                 if(string==null) {
@@ -131,7 +131,7 @@ public class CommonController {
             str="dhash";
             session.setAttribute("method",str);
 
-            list= DHashArith.produceAllImagesDhash(10);
+            list= DHashArith.produceAllImagesDhash(150);
 
             for (int i=0;i<list.size();i++){
                 String string=commonservice.DhashByAddress("images/"+(i+1)+".jpg");
@@ -149,7 +149,6 @@ public class CommonController {
         }
         return "/index";
     }
-
 }
 
 

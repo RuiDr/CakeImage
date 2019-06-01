@@ -1,11 +1,16 @@
 package com.example.cakeImage.arithmetic;
 import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.opencv.imgproc.Imgproc.cvtColor;
+
 /**
  * @ Author     ：CrazyCake.
  * @ Date       ：Created in 10:20 2019/5/11
@@ -185,18 +190,19 @@ public static List<String> produceAllImagesPhash(int count){
         matType:矩阵类型
      */
     public static double[][] bufImagetoMat(BufferedImage original,int imgType,int matType){
-            int width=original.getWidth();
+
+        Mat grayImg;                                //gray image of srcImg
+        int width=original.getWidth();
             int height=original.getHeight();
             int[]data=new int[width*height];
             original.getRGB(0,0,width,height,data,0,width);
+
             double [][]rgbArray=new double[height][width];
             for (int i=0;i<height;i++){
                 for (int j=0;j<width;j++){
                     rgbArray[i][j]=data[i*width+j];
                 }
             }
-
-
        return  rgbArray;
     }
     /*

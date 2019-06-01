@@ -1,18 +1,17 @@
 package com.example.cakeImage.arithmetic;
-
 import com.example.cakeImage.tools.Utility;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfKeyPoint;
-import org.opencv.core.Size;
+import org.opencv.core.*;
+import org.opencv.features2d.DescriptorExtractor;
 import org.opencv.features2d.FeatureDetector;
-
+import org.opencv.highgui.Highgui;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.beans.FeatureDescriptor;
+import java.awt.image.DataBufferByte;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
-
-import static org.opencv.imgproc.Imgproc.GaussianBlur;
-
+import java.util.List;
 /**
  * @ Author     ：CrazyCake.
  * @ Date       ：Created in 19:27 2019/5/11
@@ -21,11 +20,333 @@ import static org.opencv.imgproc.Imgproc.GaussianBlur;
  * @Version: 1.0$
  */
 public class Sift {
+
     BufferedImage image = null;
 
+    public static void main(String[] args) {
+
+       boolean a= SiftGenerat("G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\4.jpg","G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\12.jpg");
+       System.out.println("isMatched"+a);
+    }
+
+//    是否匹配
+    public static boolean SiftGenerat(String image,String image1){
+
+//        获取特征向量
+        Mat mat1=getMat(image);
+        Mat mat=getMat(image1);
+
+        boolean isMatch=isMatched(mat1,mat);
+
+
+        return isMatch;
+
+
+    }
+//    将两幅图像的描述子，进行欧氏距离计算
+    public static boolean isMatched(Mat mat,Mat mat1){
+        int count=0;
+
+        for (int i=0;i<mat.height();i++){
+            ArrayList<Double>list=new ArrayList<>();
+//            获取某一行数据
+            Mat mat2=mat.rowRange(i,i+1);
+            for (int j=0;j<mat1.height();j++){
+                Mat mat3=mat1.rowRange(j,j+1);
+
+//                计算欧式距离
+                double len=Distance(mat2,mat3);
+                System.out.println("len is "+len);
+                list.add(len);
+            }
+
+//            对list进行排序
+            Collections.sort(list);
+
+            System.out.println("list is "+list.size());
+
+            double a1=list.get(0);
+
+            System.out.println("a1 "+a1);
+            double a2=list.get(1);
+
+            System.out.println("a2 "+a2);
+
+
+            if ((a1/a2)<0.6){
+//                表示匹配,统计
+                count++;
+            }
+        }
+        if (count>3){
+            return true;
+        }else
+        {
+            return false;
+        }
+////        获取长度
+//        int aWidth=mat.width();
+//        int aHeight=mat.height();
+////        获取长度
+//        int bWidth=mat.width();
+//        int bHeight=mat.height();
+//
+////        为了方便计算，先将其转换成数组，方便计算
+//        int[][]a=new int[aHeight][aWidth];
+//
+//        for (int i=0;i<mat.height();i++){
+//            for (int j=0;j<mat.width();j++){
+//                double []value=mat.get(i,j);
+//                a[i][j]=(int) value[0];
+//            }
+//        }
+//
+//        int [][]b=new int[bHeight][bWidth];
+//
+//        for (int i=0;i<mat1.height();i++){
+//            for (int j=0;j<mat1.width();j++){
+//                double []value=mat1.get(i,j);
+//                b[i][j]=(int) value[0];
+//            }
+//        }
+//
+////        计算欧式距离
+//        for (int i=0;i<a.length;i++){
+////            一个关键点的特征向量
+//            for (int j=0,k=0;j<a[0].length;j++){
+//
+//            }
+//        }
+
+
+//
+
+//        将
+
+    }
+    private static double Distance(Mat mat2, Mat mat3) {
+        double distance=0;
+        for (int i=0,j=0;i<mat2.width()&&j<mat3.width();i++,j++){
+            distance+=Math.pow(mat2.get(0,i)[0]-mat3.get(0,j)[0],2);
+        }
+        return distance;
+    }
+
+    public static  MatOfKeyPoint getFeaturePoints(Mat mat){
+        FeatureDetector fd = FeatureDetector.create(FeatureDetector.SIFT);
+        MatOfKeyPoint mkp =new MatOfKeyPoint();
+        fd.detect(mat, mkp);
+        return mkp;
+    }
+
+    public static Mat getFeature(Mat mat){
+        Mat desc = new Mat();
+        MatOfKeyPoint mkp = getFeaturePoints(mat);
+        DescriptorExtractor de = DescriptorExtractor.create(DescriptorExtractor.SIFT);
+        de.compute(mat,mkp,desc );//提取sift特征
+        return desc;
+    }
+
+    public static Mat BufImg2Mat (BufferedImage original, int imgType, int matType) {
+        if (original == null) {
+            throw new IllegalArgumentException("original == null");
+        }
+
+        // Don't convert if it already has correct type
+        if (original.getType() != imgType) {
+
+            // Create a buffered image
+            BufferedImage image = new BufferedImage(original.getWidth(), original.getHeight(), imgType);
+
+            // Draw the image onto the new buffer
+            Graphics2D g = image.createGraphics();
+            try {
+                g.setComposite(AlphaComposite.Src);
+                g.drawImage(original, 0, 0, null);
+            } finally {
+                g.dispose();
+            }
+        }
+
+        byte[] pixels = ((DataBufferByte) original.getRaster().getDataBuffer()).getData();
+        Mat mat = Mat.eye(original.getHeight(), original.getWidth(), matType);
+        mat.put(0, 0, pixels);
+        return mat;
+    }
+
+//    获取矩阵
+    public static Mat  getMat(String string) {
+        System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
+       Mat test_mat = Highgui.imread(string);
+        Mat desc = new Mat();
+        FeatureDetector fd = FeatureDetector.create(FeatureDetector.SIFT);
+        MatOfKeyPoint mkp =new MatOfKeyPoint();
+        fd.detect(test_mat, mkp);
+        DescriptorExtractor de = DescriptorExtractor.create(DescriptorExtractor.SIFT);
+        de.compute(test_mat,mkp,desc );//提取sift特征
+
+        System.out.println(desc.cols());
+        System.out.println(desc.rows());
+        System.out.println("m = " + desc.dump());
+//        BufferedImage bufferedImage=null;
+//        try {
+//            bufferedImage= ImageIO.read(new File("G:\\java\\1.jpg"));
+//            //            灰度变换
+//            bufferedImage=ImageToGray(bufferedImage);
+////            image转换成二维数组
+//            double [][]source=BufferedImageToDouble(bufferedImage);
+////            模糊后的高斯显示
+//            HashMap<Integer,double[][]>result=getGaussPyramid(source,0,3,1.6);
+////            获取高斯差分金字塔
+//            HashMap<Integer,double[][]> dog=gaussToDog(result,6);
+//
+////            Iterator iter = dog.entrySet().iterator();
+////            while (iter.hasNext()) {
+////                Map.Entry entry = (Map.Entry) iter.next();
+////                Object key = entry.getKey();
+////                double[][] value = (double[][])entry.getValue();
+////                System.out.println("key is "+key + ": value is :" );
+////                for(int i=0;i<value.length;i++) {
+////                    for(int j=0;j<value[0].length;j++) {
+////                        System.out.print(" "+value[i][j]);
+////                    }
+////                    System.out.println();
+////                }
+////
+////            }
+//            HashMap<Integer, List<MyPoint>>keyPoints= getRoughKeyPoint(dog,6);
+//
+//          keyPoints=  filterPoints(dog, keyPoints, 10,0.03);
+//            Iterator iter = keyPoints.entrySet().iterator();
+//            while (iter.hasNext()) {
+//                Map.Entry entry = (Map.Entry) iter.next();
+//                Object key = entry.getKey();
+//                List<MyPoint> value = (List<MyPoint>)entry.getValue();
+//
+//
+//                System.out.println("value Size is "+value.size());
+//                System.out.println("key is "+key + ": value is :"  );
+//                for(int i=0;i<value.size();i++) {
+////                    获取关键点的高斯金字塔
+//                    double[][]a=getGauss(result,value.get(i));
+//                    ArrayList<Double> list=getFeatureVector(a,value.get(i),value.get(i).getTheta());
+//                    value.get(i).setGrads(list);
+//                    HashMap<Integer,double[]> lastList= GetGescriptor(result,value.get(i),6,4);
+//                    value.get(i).setList(lastList);
+//
+//                    System.out.println("getTheTa is "+value.get(i).getTheta());
+//                    System.out.println("Octave is "+value.get(i).getOctave());
+//                    System.out.println("X is "+value.get(i).getX());
+//                    System.out.println("Y is "+value.get(i).getY());
+//                    System.out.println("list is "+value.get(i).getGrads());
+//
+//                    System.out.println("list is "+value.get(i).getList());
+//                }
+//
+//            }
+////        获得描述子
+//            writeImageFile(bufferedImage);
+//            System.out.println(bufferedImage);
+//
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+        return desc;
+    }
+
+    private static double[][] getGauss(HashMap<Integer,double[][]>gauss,MyPoint point) {
+        int num=6;
+        int index=point.getOctave()+point.getS()*num;
+        double[][]a=gauss.get(index);
+        return a;
+    }
+
+    private static double[][] BufferedImageToDouble(BufferedImage bufferedImage) {
+        int width=bufferedImage.getWidth();
+        int height=bufferedImage.getHeight();
+
+        double[][] result=new double[height][width];
+        for(int j=0;j<height;j++){
+            for(int i=0;i<width;i++){
+                int rgb=bufferedImage.getRGB(i, j);
+                System.out.println("rgb is "+rgb);
+                int grey=(rgb>>16)&0xFF;
+                System.out.println("grey is "+grey);
+                result[j][i]=grey;
+
+            }
+        }
+        return result ;
+    }
+
+    private static Mat BufferedImageMat(BufferedImage bufferedImage) {
+        int width=bufferedImage.getWidth();
+        int height=bufferedImage.getHeight();
+
+       Mat mat=new Mat(width,height,CvType.CV_32F);
+        for(int j=0;j<height;j++){
+            for(int i=0;i<width;i++){
+                int rgb=bufferedImage.getRGB(i, j);
+
+                System.out.println("rgb is "+rgb);
+                int grey=(rgb>>16)&0xFF;
+                System.out.println("grey is "+grey);
+                double []a=new double[3];
+                a[0]=grey;
+                a[1]=grey;
+                a[2]=grey;
+                mat.put(i,j,a);
+
+            }
+        }
+        return mat ;
+    }
+    public static  void writeImageFile(BufferedImage bi) throws IOException {
+        File outputfile = new File("saved.png");
+        ImageIO.write(bi, "png", outputfile);
+    }
+
+    public static Mat bufferToMartix(BufferedImage image) {
+        int width=image.getWidth();
+        int height=image.getHeight();
+        Mat mat = new Mat(height, width, CvType.CV_8UC3);
+        byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+        if (mat != null) {
+            try {
+                mat.put(0, 0, data);
+            } catch (Exception e) {
+                //throw new UnsupportedOperationException("byte is null");
+                return null;
+            }
+        }
+        return mat;
+    }
+    public static BufferedImage ImageToGray(BufferedImage  bufferedImage){
+
+        int width=bufferedImage.getWidth();
+        int height=bufferedImage.getHeight();
+        BufferedImage result=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
+        for (int j=0;j<height;j++){
+            for (int i=0;i<width;i++) {
+//      返回： -6814716，此处可将整数转换成Color获取RGB值
+                int argb = bufferedImage.getRGB(i, j);
+//      16进制颜色码转换成RGB颜色值
+                int a = argb >> 24 & 0xff;
+                int r = argb >> 16 & 0xff;
+                int g = argb >> 8 & 0xff;
+                int b = argb & 0xff;
+                int gray=(int )(0.3*r+0.59*g+0.11*b);
+                int grayARGB=a<<24|gray<<16|gray<<8|gray;
+                result.setRGB(i,j,grayARGB);
+            }
+        }
+        return result;
+    }
     public Sift(BufferedImage image) {
         this.image = image;
     }
+
+
 
     /**
      * @ Author     ：CrazyCake
@@ -35,7 +356,7 @@ public class Sift {
      * @高斯模糊：是一种图像滤波器，它使用正态分布（高斯函数）计算模糊模板，并使用该模板与原图像做卷积运算，达到模糊图像的目的
      * @ Return     ：模糊后的图像信息矩阵
      */
-    public double[][] gaussTran(double[][] source, int index) {
+    public static double[][] gaussTran(double[][] source, int index) {
 //        获取大小
         int height = source.length;
         int width = source[0].length;
@@ -71,7 +392,7 @@ public class Sift {
      * @ Description：构建高斯金字塔
      * @ Return     ：
      */
-    public HashMap<Integer, double[][]> getGaussPyramid(double[][] source, int minSize, int n, double baseSigma) {
+    public static HashMap<Integer, double[][]> getGaussPyramid(double[][] source, int minSize, int n, double baseSigma) {
         //        存放结果
         HashMap<Integer, double[][]> gaussPyramid = new HashMap<>();
 //        临时存储
@@ -87,61 +408,61 @@ public class Sift {
 //         获取原始矩阵
 
         double k = Math.pow(2, Math.sqrt(n));
-//        使用高斯函数做卷积
-        for (int i = 0; i < octave; i++) {
-            int index = 0;
-            for (int j = 0; j < gaussS; j++) {
-                index = i * gaussS + j;
-//                第一张不做模糊
-                if (j == 0) {
-                    gaussPyramid.put(index, tempSource);
-                    continue;
-                }
-//                计算
-                Mat last = new Mat();
-//                获得模糊后的矩阵
-                Mat mat = ArrayToMat(tempSource);
-                GaussianBlur(mat, last, new Size(11, 11), Math.pow(k, j) * baseSigma, 0, Core.BORDER_CONSTANT);
-//                将高斯模糊后的值转换成double形式
-                double[][] a = MatToArray(last);
-                gaussPyramid.put(index, a);
-            }
-//            降点采样，将前一组的倒数第三组作为后一组的开始
-            tempSource = getCapSimpleTmg(gaussPyramid.get(index - 2));
-        }
-//        double []sig=new double[6];
-//        sig[0]=baseSigma;
-//        for (int i=0;i<gaussS;i++){
-//            double preSigma=baseSigma*Math.pow(2,(double)(i-1)/n);
-//            double nextSigma=preSigma*Math.pow(2,(double)1/n);
-//            sig[i]=Math.sqrt(nextSigma*nextSigma-preSigma*preSigma);
-//        }
-////        迭代生成一张张高斯图像
-//        for (int i=0;i<octave;i++){
-//            int j=0;//组内层数
-//            int index=0;//每张图片在数组(hashmap)里面的索引
-//            for (;j<gaussS;j++){
-//                if(0==j){
-////                    第一张不进行模糊处理
-//                    index=i*gaussS+j;
-////                    存入高斯金字塔
-//                    gaussPyramid.put(index,tempSource);
+////        使用高斯函数做卷积
+//        for (int i = 0; i < octave; i++) {
+//            int index = 0;
+//            for (int j = 0; j < gaussS; j++) {
+//                index = i * gaussS + j;
+////                第一张不做模糊
+//                if (j == 0) {
+//                    gaussPyramid.put(index, tempSource);
 //                    continue;
 //                }
-////                计算得到下一张图片的组内尺度
-////                sigma=sigma*Math.pow(2,(double)1/s);
-//                double start=System.currentTimeMillis();
-////                进行高斯模糊
-//                tempSource=gaussTran(tempSource,j);
-//                double end=System.currentTimeMillis();
-//                System.out.println("模糊"+(end-start));
-//                index=i*gaussS+j;
-////                存入高斯金字塔
-//                gaussPyramid.put(index,tempSource);
+////                计算
+//                Mat last = new Mat();
+////                获得模糊后的矩阵
+//                Mat mat = ArrayToMat(tempSource);
+//                GaussianBlur(mat, last, new Size(11, 11), Math.pow(k, j) * baseSigma, 0, Core.BORDER_CONSTANT);
+////                将高斯模糊后的值转换成double形式
+//                double[][] a = MatToArray(last);
+//                gaussPyramid.put(index, a);
 //            }
-////            选每一组的倒数第三张图片进行降采样，注意此时的j是6而不是5，所以减去3而不是2
-//             tempSource=getCapSimpleTmg(gaussPyramid.get(index-2));
+////            降点采样，将前一组的倒数第三组作为后一组的开始
+//            tempSource = getCapSimpleTmg(gaussPyramid.get(index - 2));
 //        }
+        double []sig=new double[6];
+        sig[0]=baseSigma;
+        for (int i=0;i<gaussS;i++){
+            double preSigma=baseSigma*Math.pow(2,(double)(i-1)/n);
+            double nextSigma=preSigma*Math.pow(2,(double)1/n);
+            sig[i]=Math.sqrt(nextSigma*nextSigma-preSigma*preSigma);
+        }
+//        迭代生成一张张高斯图像
+        for (int i=0;i<octave;i++){
+            int j=0;//组内层数
+            int index=0;//每张图片在数组(hashmap)里面的索引
+            for (;j<gaussS;j++){
+                if(0==j){
+//                    第一张不进行模糊处理
+                    index=i*gaussS+j;
+//                    存入高斯金字塔
+                    gaussPyramid.put(index,tempSource);
+                    continue;
+                }
+//                计算得到下一张图片的组内尺度
+//                sigma=sigma*Math.pow(2,(double)1/s);
+                double start=System.currentTimeMillis();
+//                进行高斯模糊
+                tempSource=gaussTran(tempSource,j);
+                double end=System.currentTimeMillis();
+                System.out.println("模糊"+(end-start));
+                index=i*gaussS+j;
+//                存入高斯金字塔
+                gaussPyramid.put(index,tempSource);
+            }
+//            选每一组的倒数第三张图片进行降采样，注意此时的j是6而不是5，所以减去3而不是2
+             tempSource=getCapSimpleTmg(gaussPyramid.get(index-2));
+        }
         return gaussPyramid;
     }
 
@@ -151,7 +472,7 @@ public class Sift {
      * @ Description：进行降采样（隔点采样）
      * @ Return     ：
      */
-    private double[][] getCapSimpleTmg(double[][] source) {
+    public static double[][] getCapSimpleTmg(double[][] source) {
 //        计算每一组高斯图的大小，隔点采样按采取偶数位上的点进行，否则大小计算有误！！！！！
         int width = (int) source[0].length / 2;
         int height = (int) source.length / 2;
@@ -166,7 +487,6 @@ public class Sift {
         }
         return result;
     }
-
     /**
      * @ Author     ：CrazyCake
      * @ Date       ：Created in 16:12 2019/5/27
@@ -199,7 +519,6 @@ public class Sift {
         }
         return dogPyramid;
     }
-
     /**
      * @ Author     ：CrazyCake
      * @ Date       ：Created in 17:43 2019/5/27
@@ -214,19 +533,28 @@ public class Sift {
         Set<Integer> dogIndex = dogPyramid.keySet();
         for (int i : dogIndex) {
 //            对于dog金字塔每组的第一张和最后一张图像不进行求极值处理，原因是无法在高斯金字塔的方向上做极值
-            if (((i % num) != 0) && (i != (num - 1) && ((i - 1) >= 0)) && ((i + 1) < num)) {
+            if (((i%num)!=0)&&((i%num)!=num-2)) {
                 double[][] dogImage = dogPyramid.get(i);
+
+                System.out.println("dogImage is "+dogImage.length+" 0:"+dogImage[0].length);
 //                获取该层图空间位置上的下一层和上一层
                 double[][] dogImgeDown = dogPyramid.get(i - 1);
+                System.out.println("dogImgeDown is "+dogImgeDown.length+" 0:"+dogImgeDown[0].length);
                 double[][] dogImageUp = dogPyramid.get(i + 1);
-                List<MyPoint> mpList = new ArrayList<>();
 
-                int width = dogImage[0].length;
-                int height = dogImage.length;
+                System.out.println("dogImgeUp is "+dogImageUp.length+" 0:"+dogImageUp[0].length);
+
+                if (!((dogImage.length==dogImageUp.length)&&(dogImage.length==dogImgeDown.length))){
+                    continue;
+                }
+
+                List<MyPoint> mpList = new ArrayList<>();
+                int width = dogImgeDown[0].length;
+                int height = dogImgeDown.length;
 //                对每张dog图像求极值点
-                for (int y = 0; y < height; y++) {
-                    for (int x = 0; x < width; x++) {
-                        if ((x > 0) && x < width - 1 && y > 0 && y < height - 1) {
+                for (int y = 0; y < height-2; y++) {
+                    for (int x = 0; x < width-2; x++) {
+                        if ((x-1>0)&&((x+1)<width)&&((y-1)>0)&&((y+1)<height)) {
 //                            图像的边缘点默认不是极值点
 //                            比较上下尺度以及8领域的共26个点
 //                            首先进行阈值化
@@ -235,35 +563,35 @@ public class Sift {
 //                            关键点的值
                             double keyValue = dogImage[y][x];
 //                            首先判断是不是噪点
-                            if (Math.abs(keyValue) > 0.5 * T / n) {
-                                values[0] = dogImage[y - 1][x - 1];
-                                values[1] = dogImage[y - 1][x];
-                                values[2] = dogImage[y - 1][x + 1];
-                                values[3] = dogImage[y][x + 1];
-                                values[4] = dogImage[y + 1][x + 1];
-                                values[5] = dogImage[y + 1][x];
-                                values[6] = dogImage[y + 1][x - 1];
-                                values[7] = dogImage[y][x - 1];
-//                            下一层
-                                values[8] = dogImgeDown[y - 1][x - 1];
-                                values[9] = dogImgeDown[y - 1][x];
-                                values[10] = dogImgeDown[y - 1][x + 1];
-                                values[11] = dogImgeDown[y][x + 1];
-                                values[12] = dogImgeDown[y + 1][x + 1];
-                                values[13] = dogImgeDown[y + 1][x];
-                                values[14] = dogImgeDown[y + 1][x - 1];
-                                values[15] = dogImgeDown[y][x - 1];
-                                values[16] = dogImgeDown[y][x];
-//                            上一层
-                                values[17] = dogImageUp[y - 1][x - 1];
-                                values[18] = dogImageUp[y - 1][x];
-                                values[19] = dogImageUp[y - 1][x + 1];
-                                values[20] = dogImageUp[y][x + 1];
-                                values[21] = dogImageUp[y + 1][x + 1];
-                                values[22] = dogImageUp[y + 1][x];
-                                values[23] = dogImageUp[y + 1][x - 1];
-                                values[24] = dogImageUp[y][x - 1];
-                                values[25] = dogImageUp[y][x];
+//                            if (Math.abs(keyValue) > 0.5 * T / n) {
+                            values[0]=dogImage[y-1][x-1];
+                            values[1]=dogImage[y-1][x];
+                            values[2]=dogImage[y-1][x+1];
+                            values[3]=dogImage[y][x-1];
+                            values[4]=dogImage[y][x+1];
+                            values[5]=dogImage[y+1][x-1];
+                            values[6]=dogImage[y+1][x];
+                            values[7]=dogImage[y+1][x+1];
+
+                            values[8]=dogImgeDown[y-1][x-1];///下一层
+                            values[9]=dogImgeDown[y-1][x];
+                            values[10]=dogImgeDown[y-1][x+1];
+                            values[11]=dogImgeDown[y][x-1];
+                            values[12]=dogImgeDown[y][x];
+                            values[13]=dogImgeDown[y][x+1];
+                            values[14]=dogImgeDown[y+1][x-1];
+                            values[15]=dogImgeDown[y+1][x];
+                            values[16]=dogImgeDown[y+1][x+1];
+
+                            values[17]=dogImageUp[y-1][x-1];///上一层
+                            values[18]=dogImageUp[y-1][x];
+                            values[19]=dogImageUp[y-1][x+1];
+                            values[20]=dogImageUp[y][x-1];
+                            values[21]=dogImageUp[y][x];
+                            values[22]=dogImageUp[y][x+1];
+                            values[23]=dogImageUp[y+1][x-1];
+                            values[24]=dogImageUp[y+1][x];
+                            values[25]=dogImageUp[y+1][x+1];
                                 boolean isKey = Utility.isExtreneValue(values, keyValue);
                                 if (isKey) {
                                     MyPoint mp = new MyPoint();
@@ -274,7 +602,7 @@ public class Sift {
                                     mpList.add(mp);
                                 }
 
-                            }
+//                            }
                         }
                     }
                 }///一张图遍历完毕
@@ -291,7 +619,7 @@ public class Sift {
      * @ Return     ：返回获得主方向的点
      */
 //  image是极值点对应的高斯金字塔,point极值点
-    public static MyPoint getFeatureVector(double[][] image, MyPoint point, double baseSigm) {
+    public static ArrayList<Double> getFeatureVector(double[][] image, MyPoint point, double baseSigm) {
 //           保存特征向量的list
         List<MyPoint> vectorList = new ArrayList<>();
 //            获取关键点的x,y值
@@ -403,8 +731,8 @@ public class Sift {
                 list.add(k * 10 * 1.0);
             }
         }
-        point.setGrads(list);
-        return point;
+
+        return list;
     }
     /**
      * @ Author     ：CrazyCake
@@ -488,7 +816,6 @@ public class Sift {
         }
         return kpoint;
     }
-
     /**
      * @ Author     ：CrazyCake
      * @ Date       ：Created in 0:09 2019/5/30
@@ -654,6 +981,7 @@ public class Sift {
             }
             key++;
         }
+//        归一化处理
        return hashMap;
     }
     /**
@@ -682,7 +1010,9 @@ public class Sift {
     //          二维数组转换成矩阵
     public static Mat ArrayToMat(double[][] source) {
         //        把二维数组转换成矩阵
-        Mat mat = new Mat();
+        int width=source.length;
+        int height=source.length;
+        Mat mat = new Mat(width,width,CvType.CV_8UC1, new Scalar(0));
         for (int i = 0; i < source.length; i++) {
             for (int j = 0; j < source[0].length; j++) {
                 mat.put(i, j, source[i][j]);
@@ -690,7 +1020,6 @@ public class Sift {
         }
         return mat;
     }
-
     //    矩阵转换成二维数组
     public static double[][] MatToArray(Mat source) {
         int w = source.width();
@@ -704,7 +1033,6 @@ public class Sift {
         }
         return mat;
     }
-
     //    求数组里面的最大值
     public static double[] MaxNum(double[] a) {
         double value[] = new double[2];
@@ -714,9 +1042,10 @@ public class Sift {
         for (int i = 0; i < a.length; i++) {
             if (a[i] >= value[0]) {
                 value[0] = a[i];
-                value[i] = i;
+                value[1] = i;
             }
         }
         return value;
     }
+
 }

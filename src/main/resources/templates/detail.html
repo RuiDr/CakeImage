@@ -1,6 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+<html  xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Detial</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -71,8 +70,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <div class="ba">
     <div class="grid_1_d" href="#" >
         <ul  >
-                <img id="img" src="" alt="显示原图" width="100%" height="100%"/>
-
+                <img id="img" src="" alt="请上传图片哦" width="100%" height="100%"/>
         </ul>
     </div>
     <div class="container" >
@@ -104,12 +102,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             <div class="tz-gallery">
                 <div class="row">
                     <div class="col-sm-6 col-md-4"  >
-                    <ul >
-                        <p th:text="${session.message}"></p>
-                        <p>123114141</p>
+                    <ul th:each="str : ${similarList}">
                         <div class="thumbnail" >
                             <a class="lightbox">
-                                <img src="" alt="Park">
+                                <img th:src="@{/images/gtvglogo.png}" >
                             </a>
                         </div>
                     </ul>
