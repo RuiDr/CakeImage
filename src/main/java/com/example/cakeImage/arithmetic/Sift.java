@@ -4,6 +4,7 @@ import org.opencv.core.*;
 import org.opencv.features2d.DescriptorExtractor;
 import org.opencv.features2d.FeatureDetector;
 import org.opencv.highgui.Highgui;
+import org.opencv.highgui.Highgui.*;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -21,20 +22,36 @@ import java.util.List;
  */
 public class Sift {
 
+    static {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
+    }
+
     BufferedImage image = null;
+    static String  fileName= PictureProcessin.path+"images/";
+
 
     public static void main(String[] args) {
 
-       boolean a= SiftGenerat("G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\4.jpg","G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\12.jpg");
+        String str="G:/java/webprojects/CakeImage/src/main/resources/static/images/1.jpg";
+       boolean a= SiftGenerat(str,"G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\12.jpg");
        System.out.println("isMatched"+a);
     }
 
 //    是否匹配
     public static boolean SiftGenerat(String image,String image1){
 
+        image=fileName+image;
+
 //        获取特征向量
         Mat mat1=getMat(image);
         Mat mat=getMat(image1);
+        System.out.println("m = " + mat.dump());
+//
+//        Highgui.imwrite("G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\mat.png",mat);
+//        Mat test_mat = Highgui.imread("G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\mat.png");
+//        Highgui.imwrite("G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\mat1.png",test_mat);
+
 
         boolean isMatch=isMatched(mat1,mat);
 
@@ -56,21 +73,21 @@ public class Sift {
 
 //                计算欧式距离
                 double len=Distance(mat2,mat3);
-                System.out.println("len is "+len);
+//                System.out.println("len is "+len);
                 list.add(len);
             }
 
 //            对list进行排序
             Collections.sort(list);
 
-            System.out.println("list is "+list.size());
+//            System.out.println("list is "+list.size());
 
             double a1=list.get(0);
 
-            System.out.println("a1 "+a1);
+//            System.out.println("a1 "+a1);
             double a2=list.get(1);
 
-            System.out.println("a2 "+a2);
+//            System.out.println("a2 "+a2);
 
 
             if ((a1/a2)<0.6){
@@ -177,17 +194,23 @@ public class Sift {
 //    获取矩阵
     public static Mat  getMat(String string) {
         System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
-       Mat test_mat = Highgui.imread(string);
-        Mat desc = new Mat();
-        FeatureDetector fd = FeatureDetector.create(FeatureDetector.SIFT);
-        MatOfKeyPoint mkp =new MatOfKeyPoint();
-        fd.detect(test_mat, mkp);
-        DescriptorExtractor de = DescriptorExtractor.create(DescriptorExtractor.SIFT);
-        de.compute(test_mat,mkp,desc );//提取sift特征
+        try {
+            System.out.println("地址："+string);
+            Mat test_mat = Highgui.imread(string);
+            Mat desc = new Mat();
+            FeatureDetector fd = FeatureDetector.create(FeatureDetector.SIFT);
+            MatOfKeyPoint mkp =new MatOfKeyPoint();
+            fd.detect(test_mat, mkp);
+            DescriptorExtractor de = DescriptorExtractor.create(DescriptorExtractor.SIFT);
+            de.compute(test_mat,mkp,desc );//提取sift特征
+            return desc;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
-        System.out.println(desc.cols());
-        System.out.println(desc.rows());
-        System.out.println("m = " + desc.dump());
+
+//        System.out.println(desc.cols());
+//        System.out.println(desc.rows());
 //        BufferedImage bufferedImage=null;
 //        try {
 //            bufferedImage= ImageIO.read(new File("G:\\java\\1.jpg"));
@@ -251,7 +274,7 @@ public class Sift {
 //        }catch (Exception e){
 //            e.printStackTrace();
 //        }
-        return desc;
+        return null;
     }
 
     private static double[][] getGauss(HashMap<Integer,double[][]>gauss,MyPoint point) {
@@ -1048,4 +1071,21 @@ public class Sift {
         return value;
     }
 
+    public static ArrayList<String> isSimilar(int count,String sourcePath) {
+
+        ArrayList<String >list=new ArrayList<>();
+
+        for (int i=0;i<count;i++){
+
+            try {
+               boolean siftGenerat = SiftGenerat((i + 1) + ".jpg",sourcePath);
+               if (siftGenerat){
+                   list.add("images/"+(i+1)+".jpg");
+               }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return list;
+    }
 }

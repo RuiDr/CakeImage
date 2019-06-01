@@ -1,6 +1,7 @@
 package com.example.cakeImage.controller;
 import com.example.cakeImage.arithmetic.DHashArith;
 import com.example.cakeImage.arithmetic.PhashArith;
+import com.example.cakeImage.arithmetic.Sift;
 import com.example.cakeImage.arithmetic.SimilarImageSearch;
 import com.example.cakeImage.entity.Ahash;
 import com.example.cakeImage.entity.Dhash;
@@ -146,9 +147,16 @@ public class CommonController {
                 }
             }
             return "/detail";
+        }else if (id.contains("sift")){
+            str="sift";
+            session.setAttribute("method",str);
+
+            return "/index";
         }
         return "/index";
     }
+
+
 }
 
 

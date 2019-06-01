@@ -1,6 +1,7 @@
 package com.example.cakeImage.controller;
 import com.example.cakeImage.arithmetic.DHashArith;
 import com.example.cakeImage.arithmetic.PhashArith;
+import com.example.cakeImage.arithmetic.Sift;
 import com.example.cakeImage.arithmetic.SimilarImageSearch;
 import com.example.cakeImage.entity.Ahash;
 import com.example.cakeImage.entity.Dhash;
@@ -34,7 +35,7 @@ public class ArithmeticController {
 
     @ResponseBody
     @RequestMapping("/perception")
-    public ArrayList<String> perception(@RequestParam(value = "search_text")String  search_text, @RequestParam( value = "file")MultipartFile file, String filePath, HttpServletRequest request, HttpSession session, Model model){
+    public ArrayList<String> perception(@RequestParam(value = "search_text")String  search_text, @RequestParam( value = "file")MultipartFile file, String filePath,  HttpSession session){
 
         String sourceImagePath="";
         String method=(String) session.getAttribute("method");
@@ -43,7 +44,7 @@ public class ArithmeticController {
         ArrayList<String >list=new ArrayList<>();
         session.setAttribute("message","This is your message");
 //            向前端发送数据
-        if (Utility.verifyUrl(search_text)) {
+        if ((search_text!=null)&&(Utility.verifyUrl(search_text))) {
             String[] str = search_text.split(",");
             search_text = str[0];
             System.out.println("text is " + search_text);
@@ -155,7 +156,9 @@ public class ArithmeticController {
             }
             if (similarList.size()==0)
                 System.out.println("没有相似图像");
-        }else{
+        }else if(method.contains("sift")){
+            list= Sift.isSimilar(10,sourceImagePath);
+            System.out.println("sift 方法的相似图片:"+list.toString());
             return list;
         }
 
