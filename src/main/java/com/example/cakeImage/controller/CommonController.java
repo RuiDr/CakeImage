@@ -7,6 +7,7 @@ import com.example.cakeImage.entity.Ahash;
 import com.example.cakeImage.entity.Dhash;
 import com.example.cakeImage.entity.Phash;
 import com.example.cakeImage.service.CommonService;
+import org.opencv.core.Core;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,11 @@ import java.util.UUID;
 public class CommonController {
     @Autowired
     public CommonService commonservice;
+
+    static {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
+    }
 
 //    默认页面
     @RequestMapping(value = "/", method = {RequestMethod.POST, RequestMethod.GET})
@@ -96,7 +102,7 @@ public class CommonController {
 //            建立平均值指纹集
             System.out.println("ahash 算法 ：");
 //            使用平均值哈希算法获得指纹集
-            list= SimilarImageSearch.produceAllImages(150);
+            list= SimilarImageSearch.produceAllImages(90);
 //            向数据库中添加指纹集，首先判断数据库中是否存在该图像的指纹
             for (int i=0;i<list.size();i++){
                 String string=commonservice.AhashByAddress("images/"+(i+1)+".jpg");
@@ -114,7 +120,7 @@ public class CommonController {
         }else if (id.contains("phash")){
             str="phash";
             session.setAttribute("method",str);
-            list= PhashArith.produceAllImagesPhash(150);
+            list= PhashArith.produceAllImagesPhash(90);
             for (int i=0;i<list.size();i++){
                 String string=commonservice.PhashByAddress("images/"+(i+1)+".jpg");
                 if(string==null&&list.get(i)!=null) {
@@ -132,7 +138,7 @@ public class CommonController {
             str="dhash";
             session.setAttribute("method",str);
 
-            list= DHashArith.produceAllImagesDhash(150);
+            list= DHashArith.produceAllImagesDhash(90);
 
             for (int i=0;i<list.size();i++){
                 String string=commonservice.DhashByAddress("images/"+(i+1)+".jpg");
@@ -148,6 +154,7 @@ public class CommonController {
             }
             return "/detail";
         }else if (id.contains("sift")){
+            System.out.println("this is fit");
             str="sift";
             session.setAttribute("method",str);
 

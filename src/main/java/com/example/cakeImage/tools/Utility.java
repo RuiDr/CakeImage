@@ -75,12 +75,12 @@ public class Utility {
 
     //    图片下载
     public static String download(String fileUrl) {
-        String filepath = "E:" + File.separator + "eee.jpg";
+        String filepath = "G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\source.jpg";
         try {
             System.out.println("fileUr is " + fileUrl);
             URL url = new URL(fileUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(5 * 1000);
+            connection.setConnectTimeout(5 * 10000);
             InputStream inputStream = null;
             if (connection.getResponseCode() == 200) {
 
@@ -89,7 +89,9 @@ public class Utility {
             }
             byte[] tmp = new byte[1024];
             int length;
-
+            if (tmp==null){
+                return null;
+            }
             OutputStream outputStream = new FileOutputStream(filepath);
             while ((length = inputStream.read(tmp)) != -1) {
                 System.out.println("length is " + length);

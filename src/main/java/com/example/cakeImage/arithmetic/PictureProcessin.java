@@ -63,6 +63,9 @@ public class PictureProcessin {
      */
     public static BufferedImage readPNGImage(String filename)
     {
+        if (filename==null){
+            return null;
+        }
         BufferedImage sourceImage=null;
         try {
             File inputFile = new File(filename);

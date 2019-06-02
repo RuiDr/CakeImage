@@ -8,9 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.opencv.imgproc.Imgproc.cvtColor;
-
 /**
  * @ Author     ：CrazyCake.
  * @ Date       ：Created in 10:20 2019/5/11
@@ -31,7 +28,6 @@ public static List<String> produceAllImagesPhash(int count){
     }
     return hashCodes;
 }
-
     public static String PHashGen(String imagePath){
         BufferedImage bufferedImage=null;
         String fingerPrint="";
@@ -167,12 +163,6 @@ public static List<String> produceAllImagesPhash(int count){
 
         iMatrix= bufImagetoMat(image ,image.getType(),CvType.CV_32F);
 
-//        for (int i=0;i<n;i++){
-//            double[]a=mat.get(i,0);
-//            for (int j=0;j<n;j++){
-//                iMatrix[i][j]=a[j];
-//            }
-//        }
     //        求系数矩阵
         double [][]coefficient= PhashArith.findCoefficient(n);
     //        求系数矩阵的转置
@@ -191,7 +181,7 @@ public static List<String> produceAllImagesPhash(int count){
      */
     public static double[][] bufImagetoMat(BufferedImage original,int imgType,int matType){
 
-        Mat grayImg;                                //gray image of srcImg
+                             //gray image of srcImg
         int width=original.getWidth();
             int height=original.getHeight();
             int[]data=new int[width*height];

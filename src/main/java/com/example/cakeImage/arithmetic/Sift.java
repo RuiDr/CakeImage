@@ -4,7 +4,6 @@ import org.opencv.core.*;
 import org.opencv.features2d.DescriptorExtractor;
 import org.opencv.features2d.FeatureDetector;
 import org.opencv.highgui.Highgui;
-import org.opencv.highgui.Highgui.*;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -22,55 +21,95 @@ import java.util.List;
  */
 public class Sift {
 
-    static {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
+    public Sift(){
+//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
     BufferedImage image = null;
+
     static String  fileName= PictureProcessin.path+"images/";
 
 
     public static void main(String[] args) {
 
-        String str="G:/java/webprojects/CakeImage/src/main/resources/static/images/1.jpg";
-       boolean a= SiftGenerat(str,"G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\12.jpg");
-       System.out.println("isMatched"+a);
+//        String str="G:/java/webprojects/CakeImage/src/main/resources/static/images/1.jpg";
+//       boolean a= SiftGenerat(str,"G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\12.jpg");
+//       System.out.println("isMatched"+a);
+
+
+        BufferedImage bufferedImage=null;
+        try {
+            bufferedImage= ImageIO.read(new File("G:\\java\\1.jpg"));
+            //            灰度变换
+            bufferedImage=ImageToGray(bufferedImage);
+//            image转换成二维数组
+            double [][]source=BufferedImageToDouble(bufferedImage);
+//            模糊后的高斯显示
+            HashMap<Integer,double[][]>result=getGaussPyramid(source,0,3,1.6);
+
+//            获取高斯差分金字塔
+            HashMap<Integer,double[][]> dog=gaussToDog(result,6);
+
+//            获得极值点
+            HashMap<Integer, List<MyPoint>>keyPoints= getRoughKeyPoint(dog,6);
+//获得精确的极值点
+            keyPoints=  filterPoints(dog, keyPoints, 10,0.03);
+            Iterator iter1 = keyPoints.entrySet().iterator();
+            ArrayList<ArrayList<Double>>lastlist=new ArrayList<>();
+            while (iter1.hasNext()) {
+                Map.Entry entry = (Map.Entry) iter1.next();
+                Object key = entry.getKey();
+                List<MyPoint> value = (List<MyPoint>)entry.getValue();
+                System.out.println("value Size is "+value.size());
+                System.out.println("key is "+key + ": value is :"  );
+                for(int i=0;i<value.size();i++) {
+//                    获取关键点的高斯金字塔
+                    double[][]a=getGauss(result,value.get(i));
+                    ArrayList<Double> list=getFeatureVector(a,value.get(i),value.get(i).getTheta());
+                    lastlist.add(list);
+//                    获取多个方向
+                    value.get(i).setGrads(list);
+//                    获得描述子
+                    HashMap<Integer,double[]> lastList= GetGescriptor(result,value.get(i),6,4);
+
+                }
+            }
+//        获得描述子
+            for (int i=0;i<lastlist.size();i++){
+                System.out.println(i+"  "+lastlist.get(i).toString());
+            }
+            writeImageFile(bufferedImage);
+            System.out.println(bufferedImage);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
 //    是否匹配
-    public static boolean SiftGenerat(String image,String image1){
-
-        image=fileName+image;
-
+    public  boolean SiftGenerat(String image,String image1){
 //        获取特征向量
         Mat mat1=getMat(image);
         Mat mat=getMat(image1);
         System.out.println("m = " + mat.dump());
 //
-//        Highgui.imwrite("G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\mat.png",mat);
-//        Mat test_mat = Highgui.imread("G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\mat.png");
-//        Highgui.imwrite("G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\mat1.png",test_mat);
-
-
+        Highgui.imwrite("G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\mat.png",mat);
+        Mat test_mat = Highgui.imread("G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\mat.png");
+        Highgui.imwrite("G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\mat1.png",test_mat);
         boolean isMatch=isMatched(mat1,mat);
-
-
         return isMatch;
-
-
     }
 //    将两幅图像的描述子，进行欧氏距离计算
-    public static boolean isMatched(Mat mat,Mat mat1){
+    public  boolean isMatched(Mat mat,Mat mat1){
         int count=0;
-
         for (int i=0;i<mat.height();i++){
             ArrayList<Double>list=new ArrayList<>();
 //            获取某一行数据
             Mat mat2=mat.rowRange(i,i+1);
             for (int j=0;j<mat1.height();j++){
                 Mat mat3=mat1.rowRange(j,j+1);
-
 //                计算欧式距离
                 double len=Distance(mat2,mat3);
 //                System.out.println("len is "+len);
@@ -79,14 +118,10 @@ public class Sift {
 
 //            对list进行排序
             Collections.sort(list);
-
 //            System.out.println("list is "+list.size());
-
             double a1=list.get(0);
-
 //            System.out.println("a1 "+a1);
             double a2=list.get(1);
-
 //            System.out.println("a2 "+a2);
 
 
@@ -164,7 +199,7 @@ public class Sift {
         return desc;
     }
 
-    public static Mat BufImg2Mat (BufferedImage original, int imgType, int matType) {
+    public  Mat BufImg2Mat (BufferedImage original, int imgType, int matType) {
         if (original == null) {
             throw new IllegalArgumentException("original == null");
         }
@@ -192,88 +227,90 @@ public class Sift {
     }
 
 //    获取矩阵
-    public static Mat  getMat(String string) {
-        System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
-        try {
-            System.out.println("地址："+string);
-            Mat test_mat = Highgui.imread(string);
-            Mat desc = new Mat();
-            FeatureDetector fd = FeatureDetector.create(FeatureDetector.SIFT);
-            MatOfKeyPoint mkp =new MatOfKeyPoint();
-            fd.detect(test_mat, mkp);
-            DescriptorExtractor de = DescriptorExtractor.create(DescriptorExtractor.SIFT);
-            de.compute(test_mat,mkp,desc );//提取sift特征
-            return desc;
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-
-//        System.out.println(desc.cols());
-//        System.out.println(desc.rows());
-//        BufferedImage bufferedImage=null;
+    public  Mat  getMat(String string) {
+//        string="G:\\java\\webprojects\\CakeImage\\src\\main\\resources\\static\\images\\12.jpg";
+//        System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
 //        try {
-//            bufferedImage= ImageIO.read(new File("G:\\java\\1.jpg"));
-//            //            灰度变换
-//            bufferedImage=ImageToGray(bufferedImage);
-////            image转换成二维数组
-//            double [][]source=BufferedImageToDouble(bufferedImage);
-////            模糊后的高斯显示
-//            HashMap<Integer,double[][]>result=getGaussPyramid(source,0,3,1.6);
-////            获取高斯差分金字塔
-//            HashMap<Integer,double[][]> dog=gaussToDog(result,6);
-//
-////            Iterator iter = dog.entrySet().iterator();
-////            while (iter.hasNext()) {
-////                Map.Entry entry = (Map.Entry) iter.next();
-////                Object key = entry.getKey();
-////                double[][] value = (double[][])entry.getValue();
-////                System.out.println("key is "+key + ": value is :" );
-////                for(int i=0;i<value.length;i++) {
-////                    for(int j=0;j<value[0].length;j++) {
-////                        System.out.print(" "+value[i][j]);
-////                    }
-////                    System.out.println();
-////                }
-////
-////            }
-//            HashMap<Integer, List<MyPoint>>keyPoints= getRoughKeyPoint(dog,6);
-//
-//          keyPoints=  filterPoints(dog, keyPoints, 10,0.03);
-//            Iterator iter = keyPoints.entrySet().iterator();
-//            while (iter.hasNext()) {
-//                Map.Entry entry = (Map.Entry) iter.next();
-//                Object key = entry.getKey();
-//                List<MyPoint> value = (List<MyPoint>)entry.getValue();
-//
-//
-//                System.out.println("value Size is "+value.size());
-//                System.out.println("key is "+key + ": value is :"  );
-//                for(int i=0;i<value.size();i++) {
-////                    获取关键点的高斯金字塔
-//                    double[][]a=getGauss(result,value.get(i));
-//                    ArrayList<Double> list=getFeatureVector(a,value.get(i),value.get(i).getTheta());
-//                    value.get(i).setGrads(list);
-//                    HashMap<Integer,double[]> lastList= GetGescriptor(result,value.get(i),6,4);
-//                    value.get(i).setList(lastList);
-//
-//                    System.out.println("getTheTa is "+value.get(i).getTheta());
-//                    System.out.println("Octave is "+value.get(i).getOctave());
-//                    System.out.println("X is "+value.get(i).getX());
-//                    System.out.println("Y is "+value.get(i).getY());
-//                    System.out.println("list is "+value.get(i).getGrads());
-//
-//                    System.out.println("list is "+value.get(i).getList());
-//                }
-//
-//            }
-////        获得描述子
-//            writeImageFile(bufferedImage);
-//            System.out.println(bufferedImage);
-//
+//            System.out.println("地址："+string);
+//            Mat test_mat  =  BufferedImageMat(ImageIO.read(new File(string)));
+////            Mat test_mat = Highgui.imread(string);
+//            Mat desc = new Mat();
+//            FeatureDetector fd = FeatureDetector.create(FeatureDetector.SIFT);
+//            MatOfKeyPoint mkp =new MatOfKeyPoint();
+//            fd.detect(test_mat, mkp);
+//            DescriptorExtractor de = DescriptorExtractor.create(DescriptorExtractor.SIFT);
+//            de.compute(test_mat,mkp,desc );//提取sift特征
+//            System.out.println(desc.cols());
+//            System.out.println(desc.rows());
+//            return desc;
 //        }catch (Exception e){
 //            e.printStackTrace();
 //        }
+
+
+        BufferedImage bufferedImage=null;
+        try {
+            bufferedImage= ImageIO.read(new File("G:\\java\\1.jpg"));
+            //            灰度变换
+            bufferedImage=ImageToGray(bufferedImage);
+//            image转换成二维数组
+            double [][]source=BufferedImageToDouble(bufferedImage);
+//            模糊后的高斯显示
+            HashMap<Integer,double[][]>result=getGaussPyramid(source,0,3,1.6);
+//            获取高斯差分金字塔
+            HashMap<Integer,double[][]> dog=gaussToDog(result,6);
+
+//            Iterator iter = dog.entrySet().iterator();
+//            while (iter.hasNext()) {
+//                Map.Entry entry = (Map.Entry) iter.next();
+//                Object key = entry.getKey();
+//                double[][] value = (double[][])entry.getValue();
+//                System.out.println("key is "+key + ": value is :" );
+//                for(int i=0;i<value.length;i++) {
+//                    for(int j=0;j<value[0].length;j++) {
+//                        System.out.print(" "+value[i][j]);
+//                    }
+//                    System.out.println();
+//                }
+//
+//            }
+            HashMap<Integer, List<MyPoint>>keyPoints= getRoughKeyPoint(dog,6);
+
+          keyPoints=  filterPoints(dog, keyPoints, 10,0.03);
+            Iterator iter = keyPoints.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                Object key = entry.getKey();
+                List<MyPoint> value = (List<MyPoint>)entry.getValue();
+
+
+                System.out.println("value Size is "+value.size());
+                System.out.println("key is "+key + ": value is :"  );
+                for(int i=0;i<value.size();i++) {
+//                    获取关键点的高斯金字塔
+                    double[][]a=getGauss(result,value.get(i));
+                    ArrayList<Double> list=getFeatureVector(a,value.get(i),value.get(i).getTheta());
+                    value.get(i).setGrads(list);
+                    HashMap<Integer,double[]> lastList= GetGescriptor(result,value.get(i),6,4);
+                    value.get(i).setList(lastList);
+
+                    System.out.println("getTheTa is "+value.get(i).getTheta());
+                    System.out.println("Octave is "+value.get(i).getOctave());
+                    System.out.println("X is "+value.get(i).getX());
+                    System.out.println("Y is "+value.get(i).getY());
+                    System.out.println("list is "+value.get(i).getGrads());
+
+                    System.out.println("list is "+value.get(i).getList());
+                }
+
+            }
+//        获得描述子
+            writeImageFile(bufferedImage);
+            System.out.println(bufferedImage);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return null;
     }
 
@@ -292,9 +329,9 @@ public class Sift {
         for(int j=0;j<height;j++){
             for(int i=0;i<width;i++){
                 int rgb=bufferedImage.getRGB(i, j);
-                System.out.println("rgb is "+rgb);
+//                System.out.println("rgb is "+rgb);
                 int grey=(rgb>>16)&0xFF;
-                System.out.println("grey is "+grey);
+//                System.out.println("grey is "+grey);
                 result[j][i]=grey;
 
             }
@@ -303,10 +340,11 @@ public class Sift {
     }
 
     private static Mat BufferedImageMat(BufferedImage bufferedImage) {
+
         int width=bufferedImage.getWidth();
         int height=bufferedImage.getHeight();
 
-       Mat mat=new Mat(width,height,CvType.CV_32F);
+       Mat mat=new Mat(width,height,CvType.CV_8U);
         for(int j=0;j<height;j++){
             for(int i=0;i<width;i++){
                 int rgb=bufferedImage.getRGB(i, j);
@@ -1071,14 +1109,14 @@ public class Sift {
         return value;
     }
 
-    public static ArrayList<String> isSimilar(int count,String sourcePath) {
+    public  ArrayList<String> isSimilar(int count,String sourcePath) {
 
         ArrayList<String >list=new ArrayList<>();
 
         for (int i=0;i<count;i++){
 
             try {
-               boolean siftGenerat = SiftGenerat((i + 1) + ".jpg",sourcePath);
+               boolean siftGenerat = SiftGenerat(sourcePath,fileName+(i + 1) + ".jpg");
                if (siftGenerat){
                    list.add("images/"+(i+1)+".jpg");
                }

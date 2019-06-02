@@ -35,10 +35,11 @@ public class SimilarImageSearch {
 
 //    计算汉明距离
     public static int hammingDistance(String sourceHashCode,String hashCode){
+
         int difference=0;
         int len=sourceHashCode.length();
         for (int i=0;i<len;i++){
-            if(sourceHashCode.charAt(i)!=hashCode.charAt(i)){
+            if(sourceHashCode!=null&&hashCode!=null&&sourceHashCode.charAt(i)!=hashCode.charAt(i)){
                 difference++;
             }
         }
@@ -80,7 +81,7 @@ public class SimilarImageSearch {
           }
       }
 //      第五步，计算哈希值
-//       将上一步的比较结果，组合在一起，就构成了一个64位的整数，这就是这张图片的指纹
+//       将上一步的比较结果，组合在一起，就构成了一个64位的整数，这就是这张图[片的指纹
      StringBuffer hashCode=new StringBuffer();
       for (int i=0;i<comps.length;i+=4){
           int result=comps[i]*(int)Math.pow(2,3)+comps[i+1]*(int)Math.pow(2,2)+comps[i + 2] * (int) Math.pow(2, 1) + comps[i + 3];

@@ -203,7 +203,7 @@ input:focus {
 	min-height:600px;
 }
 .ba{
-	background:url(../images/dbackground.jpg)no-repeat center top;
+	background:url(../images/title.jpg)no-repeat center top;
 	background-size:cover;
 	-webkit-background-size:cover;
 	-moz-background-size:cover;
@@ -241,7 +241,7 @@ input:focus {
 	margin:0 auto;
 }
 .nav1 {
-	background:#555;
+	/*background:#555;*/
 	height:50px;
 	padding: 0;
 }
@@ -252,7 +252,7 @@ input:focus {
 }
 .nav1 li a {
 	font-size: 16px;
-	color: white;
+	/*color: white;*/
 	display: block;
 	line-height:50px;
 	padding: 0 28px;

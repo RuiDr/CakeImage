@@ -23,6 +23,61 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <script src="https://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        .searchContainer {
+            display: flex;
+        }
+        .searchText{
+            height: 50px;
+            width: 468px;
+            border: 2px solid #fff;
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(0,0,0,.5);
+            background-color: transparent;
+        }
+        .my_text{
+            font-size: 14px;
+            color: #fff;
+            height: 100%;
+            line-height: 42px;
+            margin-right: 42px;
+            width: 468px;
+            background-color: transparent;
+            border: none;
+        }
+        .fileButton {
+            height: 50px;
+            color: #333;
+            line-height: 54px;
+            width: 121px;
+            background-color: #fff;
+            border: 0;
+        }
+        .fileButton input {
+            width: 121px;
+            height: 50px;
+            position: absolute;
+            cursor: pointer;
+            z-index: 100;
+            opacity: 0;
+            filter: alpha(opacity=0);
+            /*right: 0;*/
+            top: 0;
+            left: 0;
+            background: 0 0;
+            border: 0;
+        }
+        .my-search {
+            height: 50px;
+            width: 40px;
+            background: white;
+            /*margin-left: 5px;*/
+            margin-right: 10px;
+            line-height: 50px;
+            text-align: center;
+            border: 2px solid #fff;
+        }
+    </style>
 </head>
 <body>
 
@@ -80,15 +135,24 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <ul class="nav1">
                     <li id="search">
 
-                        <form action=""   id ="fileUploadForm" enctype="multipart/form-data">
-                            <input type="text" name="search_text" id="search_text" placeholder="粘贴图像" onchange="contain()"/>
-<!--                            <a href="" download="w3logo.jpg">加后缀即可</a>-->
-                            <input type="button" name="search_button" id="search_button"  />
-<!--                            <input type="button" name="camera_button" id="camera_button" onclick="window.location.href='/camera'">-->
-                            <br/>
-                            <br/>
-                            <br/>
-                            <input type="file" name="file" id="file" display="none" onchange="inputImage()">
+<!--                        <form action=""   id ="fileUploadForm" enctype="multipart/form-data">-->
+<!--                            <input type="text" name="search_text" id="search_text" placeholder="粘贴图像" onchange="contain()"/>-->
+<!--                            <input type="button" name="search_button" id="search_button" placeholder="搜索" />-->
+<!--                            <input type="file" name="file" id="file" display="none" onchange="inputImage()">-->
+<!--                        </form>-->
+                        <form id="fileUploadForm" enctype="multipart/form-data" >
+                            <div class="searchContainer">
+                                <a class="fileButton">
+                                     本地上传
+                                    <input type="file" name="file" id="file"  onchange="inputImage()">
+                                </a>
+                                <div class="searchText">
+                                    <input type="text" class="my_text" name="my_text" id="my_text" placeholder="Address of the image" onchange="contain()"/>
+                                </div>
+                                <div class="my-search" id="my-search">Search</div>
+
+                            </div>
+
                         </form>
 
                     </li>
@@ -143,9 +207,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </body>
 <script>
     function contain(){
+        debugger
         var formData=new FormData($("#fileUploadForm")[0]);
-        var search_text=document.getElementById("search_text").value;
-        $('#img').attr('src',search_text);
+        var my_text=document.getElementById("my_text").value;
+        $('#img').attr('src',my_text);
         $.ajax({
             //提交数据的类型 POST GET
             type:"POST",
@@ -158,16 +223,26 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             contentType: false, // 告诉jQuery不要去设置Content-Type请求头            //成功返回之后调用的函数
             success:function(data){
                 alert("成功")
+                html = " "
+                $("#showList").remove();
+
+                for (var i=0;i<data.length;i++) {
+                    html += "<ul class='col-sm-6 col-md-4'> <div class='thumbnail'><a class='lightbox'><img src="+ data[i]+" alt='图片加载错误'></a></div></ul>"
+                }
+                var res = "<div id='showList'>"+html+"</div>"
+
+                $('#showResult').append(res);
+                debugger
             }   ,
             //调用出错执行的函数
             error: function(){
                 //请求出错处理
-                alert("出错")
+                alert("出错11111")
             }
         });
-        alert(search_text);
     }
     function inputImage(){
+        $("#my_text").val(" ")
         var formData=new FormData($("#fileUploadForm")[0]);
         var filePath;
         filePath=document.getElementById("file").value;
@@ -185,16 +260,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             processData: false, // 告诉jQuery不要去处理发送的数据
             contentType: false, // 告诉jQuery不要去设置Content-Type请求头            //成功返回之后调用的函数
             success:function(data){
-                console.log(data)
-                // alert("成功")
-                // <ul th:each="str : ${session.similarList}"  class="col-sm-6 col-md-4" >
-                //     <div class="thumbnail" >
-                //     <a class="lightbox">
-                //     <img th:src="@{${str.address}}"/>
-                //     </a>
-                //     </div>
-                //     </ul>
                 debugger
+                console.log(data)
                 html = " "
                 $("#showList").remove();
                 for (var i=0;i<data.length;i++) {
@@ -213,7 +280,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     }
 
     $(function(){
-        debugger
         var a = localStorage.getItem('currentImg')
         $('#img').attr('src',a);
     });
@@ -227,7 +293,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             error_prompt_alert('上传错误,文件格式必须为：png/jpg/jpeg');
             return;
         }
-        debugger
         var a = localStorage.getItem('currentImg')
         $('#img').attr('src',a);
         // window.location.reload();

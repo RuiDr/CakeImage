@@ -8,6 +8,7 @@ import com.example.cakeImage.entity.Dhash;
 import com.example.cakeImage.entity.Phash;
 import com.example.cakeImage.service.CommonService;
 import com.example.cakeImage.tools.Utility;
+import org.opencv.core.Core;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import java.io.Console;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -30,12 +32,15 @@ import java.util.Map;
 @Controller
 public class ArithmeticController {
 
+
+
+
     @Autowired
     public CommonService commonservice;
 
     @ResponseBody
     @RequestMapping("/perception")
-    public ArrayList<String> perception(@RequestParam(value = "search_text")String  search_text, @RequestParam( value = "file")MultipartFile file, String filePath,  HttpSession session){
+    public ArrayList<String> perception(@RequestParam(value = "my_text",required = false)String  my_text, @RequestParam( value = "file")MultipartFile file, String filePath,  HttpSession session){
 
         String sourceImagePath="";
         String method=(String) session.getAttribute("method");
@@ -44,14 +49,16 @@ public class ArithmeticController {
         ArrayList<String >list=new ArrayList<>();
         session.setAttribute("message","This is your message");
 //            向前端发送数据
-        if ((search_text!=null)&&(Utility.verifyUrl(search_text))) {
-            String[] str = search_text.split(",");
-            search_text = str[0];
-            System.out.println("text is " + search_text);
+        if ((my_text!=null)&&(Utility.verifyUrl(my_text))) {
+            String[] str = my_text.split(",");
+            my_text = str[0];
+            System.out.println("text is " + my_text);
             try {
-                sourceImagePath= Utility.download(search_text);
+                sourceImagePath= Utility.download(my_text);
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println(e);
+                System.out.println("message:" + e.getMessage());
+                e.printStackTrace(System.out);
             }
         }else if(file!=null){
             sourceImagePath=  Utility.tool(file,filePath);
@@ -66,8 +73,6 @@ public class ArithmeticController {
 //            使用平均值哈希算法
         if(method.contains("ahash")){
 
-
-
 //             获取目标图片的指纹
             String sourceCode = SimilarImageSearch.produceFingerPrint(sourceImagePath);
             System.out.println("ahash sourceCode is "+sourceCode);
@@ -80,10 +85,14 @@ public class ArithmeticController {
                     Ahash ahash=new Ahash();
                     ahash=map.get(i);
 //                    计算汉明距离
-                int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
-                if (differece<=10){
-                    list.add(ahash.address);
-                }
+                    if (map.get(i).finger==null)
+                    {
+                        continue;
+                    }
+                    int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
+                    if (differece<10){
+                        list.add(ahash.address);
+                    }
 
                 }
                 String test="123";
@@ -94,9 +103,6 @@ public class ArithmeticController {
             for (int i=0;i<list.size();i++){
                 System.out.println("相似图像为: "+list.get(i));
             }
-            if (list.size()==0)
-                System.out.println("没有相似图像");
-
 
 //            增强的哈希算法
         }else if(method.contains("phash")){
@@ -115,18 +121,16 @@ public class ArithmeticController {
                     phash=map.get(i);
 //                    计算汉明距离
                     int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
-                    if (differece<=12){
+                    if (differece<=10){
                         list.add(phash.address);
                     }
                 }
+                return list;
             }
 
             for (int i=0;i<list.size();i++){
                 System.out.println("相似图像为: "+list.get(i));
             }
-            if (similarList.size()==0)
-                System.out.println("没有相似图像");
-
 
 //            差异值哈希算法
         }else if(method.contains("dhash")){
@@ -145,19 +149,21 @@ public class ArithmeticController {
                     dhash=map.get(i);
 //                    计算汉明距离
                     int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
-                    if (differece<=11){
+                    if (differece<=10){
                         list.add(dhash.address);
                     }
                 }
             }
 
-            for (int i=0;i<similarList.size();i++){
-                System.out.println("相似图像为: "+similarList.get(i));
+            for (int i=0;i<list.size();i++){
+                System.out.println("相似图像为: "+list.get(i));
             }
             if (similarList.size()==0)
                 System.out.println("没有相似图像");
         }else if(method.contains("sift")){
-            list= Sift.isSimilar(10,sourceImagePath);
+
+            Sift sift=new Sift();
+            list= sift.isSimilar(10,sourceImagePath);
             System.out.println("sift 方法的相似图片:"+list.toString());
             return list;
         }
