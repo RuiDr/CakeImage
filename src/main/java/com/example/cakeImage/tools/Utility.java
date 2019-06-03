@@ -122,7 +122,7 @@ public class Utility {
 
     }
 
-
+//      //此处用做差比较，防止double类型数字的不精确行
     public static boolean isExtreneValue(double[] values, double keyValue) {
 ////        极大值
 //        for (double v:values){
@@ -139,24 +139,20 @@ public class Utility {
         if (keyValue > values[0] + 0.001) {
             ///此处表示只可能是极大值
             for (double v : values) {
-                ///此处用做差比较，防止double类型数字的不精确行
                 if (keyValue <= v + 0.001) {
-                    return false;///
+                    return false;
                 }
             }
-
             return true;
-
         } else if (keyValue < values[0] - 0.001) {
             //此处表示只可能是极小值
             for (double v : values) {
                 ///此处用做差比较，防止double类型数字的不精确行
                 if (keyValue >= v - 0.001) {
-                    return false;///
+                    return false;
                 }
             }
             return true;
-
         } else {
             return false;
         }

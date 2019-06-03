@@ -80,6 +80,7 @@ public class ArithmeticController {
             map=commonservice.findAhash();
             System.out.println("map is "+map.toString());
 
+
             if(map!=null){
                 for (int i=0;i<map.size();i++){
                     Ahash ahash=new Ahash();
@@ -90,20 +91,16 @@ public class ArithmeticController {
                         continue;
                     }
                     int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
-                    if (differece<10){
+                    if (differece<12){
                         list.add(ahash.address);
                     }
 
                 }
                 String test="123";
-
-
             }
-
             for (int i=0;i<list.size();i++){
                 System.out.println("相似图像为: "+list.get(i));
             }
-
 //            增强的哈希算法
         }else if(method.contains("phash")){
             List<Phash> similarList=new ArrayList<>();
@@ -121,7 +118,7 @@ public class ArithmeticController {
                     phash=map.get(i);
 //                    计算汉明距离
                     int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
-                    if (differece<=10){
+                    if (differece<=12){
                         list.add(phash.address);
                     }
                 }
@@ -149,7 +146,7 @@ public class ArithmeticController {
                     dhash=map.get(i);
 //                    计算汉明距离
                     int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
-                    if (differece<=10){
+                    if (differece<=12){
                         list.add(dhash.address);
                     }
                 }
@@ -163,7 +160,7 @@ public class ArithmeticController {
         }else if(method.contains("sift")){
 
             Sift sift=new Sift();
-            list= sift.isSimilar(10,sourceImagePath);
+            list= sift.isSimilar(5,sourceImagePath);
             System.out.println("sift 方法的相似图片:"+list.toString());
             return list;
         }

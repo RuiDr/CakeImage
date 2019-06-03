@@ -11,14 +11,25 @@ public class Dhash {
     public String id;
     public String address;
     public String finger;
+    public int distancec;
+
 
     @Override
     public String toString() {
-        return "ImagesInfo{" +
-                "id=" + id +
+        return "Ahash{" +
+                "id='" + id + '\'' +
                 ", address='" + address + '\'' +
                 ", finger='" + finger + '\'' +
+                ", distancec=" + distancec +
                 '}';
+    }
+
+    public int getDistancec() {
+        return distancec;
+    }
+
+    public void setDistancec(int distancec) {
+        this.distancec = distancec;
     }
 
     public void setId(String id) {

@@ -19,19 +19,24 @@ public class MyPoint {
 
     private int x;
     private int y;
-//    高斯金字塔组内第s张
-    private int s;
-//    处于第几组（第几层金字塔）
-    private int octave;
-//    关键点方向
-    private double theta;
-//    特征向量---梯度分布统计
-    private ArrayList<Double>grads;
-//    描述子
-    private HashMap<Integer,double[]> list;
-//    是否匹配过了
-    private boolean isMatched;
-    public MyPoint(int x,int y,int s,int octave,double theta,ArrayList<Double>grads,boolean isMatch,HashMap<Integer,double[]> list){
+    private int s;//高斯金字塔组内第s张
+    private int octave;///处于第几组（第几层金字塔）
+    private double theta;///关键点的方向
+
+    private double[] grads;//特征向量——————梯度分布统计
+
+    private boolean isMatched;///是否匹配过了
+
+    /**
+     * 构造函数
+     * @param x
+     * @param y
+     * @param s
+     * @param octave
+     * @param theta
+     * @param grads
+     */
+    public MyPoint(int x,int y, int s,int octave,double theta,double[] grads,boolean isMatch) {
         this.x=x;
         this.y=y;
         this.s=s;
@@ -39,108 +44,84 @@ public class MyPoint {
         this.grads=grads;
         this.theta=theta;
         this.isMatched=isMatch;
-        this.list=list;
-    }
-//    默认构造函数
-    public MyPoint(){
-
+        // TODO Auto-generated constructor stub
     }
 
-    @Override
-    public String toString() {
-        return "MyPoint{" +
-                "preX=" + preX +
-                ", preY=" + preY +
-                ", x=" + x +
-                ", y=" + y +
-                ", s=" + s +
-                ", octave=" + octave +
-                ", theta=" + theta +
-                ", grads=" + grads +
-                ", list=" + list +
-                ", isMatched=" + isMatched +
-                '}';
+    ///默认构造函数
+    public MyPoint() {
+        // TODO Auto-generated constructor stub
     }
 
-    public HashMap<Integer, double[]> getList() {
-        return list;
+
+
+
+    public double[] getGrads() {
+        return grads;
+    }
+    public void setGrads(double[] grads) {
+        this.grads = grads;
     }
 
-    public void setList(HashMap<Integer, double[]> list) {
-        this.list = list;
+    public int getX() {
+        return x;
     }
-
-    public void setPreX(int preX) {
-        this.preX = preX;
-    }
-
-    public void setPreY(int preY) {
-        this.preY = preY;
-    }
-
     public void setX(int x) {
         this.x = x;
     }
-
+    public int getY() {
+        return y;
+    }
     public void setY(int y) {
         this.y = y;
     }
-
+    public int getOctave() {
+        return octave;
+    }
+    public void setOctave(int octave) {
+        this.octave = octave;
+    }
+    public int getS() {
+        return s;
+    }
     public void setS(int s) {
         this.s = s;
     }
 
-    public void setOctave(int octave) {
-        this.octave = octave;
+
+
+
+    public double getTheta() {
+        return theta;
     }
+
+
+
 
     public void setTheta(double theta) {
         this.theta = theta;
     }
 
+    public boolean isMatched() {
+        return isMatched;
+    }
 
-
-    public void setMatched(boolean matched) {
-        isMatched = matched;
+    public void setMatched(boolean isMatched) {
+        this.isMatched = isMatched;
     }
 
     public int getPreX() {
         return preX;
     }
 
+    public void setPreX(int preX) {
+        this.preX = preX;
+    }
+
     public int getPreY() {
         return preY;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getS() {
-        return s;
-    }
-
-    public int getOctave() {
-        return octave;
-    }
-
-    public double getTheta() {
-        return theta;
-    }
-
-    public ArrayList<Double> getGrads() {
-        return grads;
-    }
-
-    public void setGrads(ArrayList<Double> grads) {
-        this.grads = grads;
-    }
-
-    public boolean isMatched() {
-        return isMatched;
+    public void setPreY(int preY) {
+        this.preY = preY;
     }
 }
