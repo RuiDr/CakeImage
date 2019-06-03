@@ -1,8 +1,5 @@
 package com.example.cakeImage.controller;
-import com.example.cakeImage.arithmetic.DHashArith;
-import com.example.cakeImage.arithmetic.PhashArith;
-import com.example.cakeImage.arithmetic.Sift;
-import com.example.cakeImage.arithmetic.SimilarImageSearch;
+import com.example.cakeImage.arithmetic.*;
 import com.example.cakeImage.entity.Ahash;
 import com.example.cakeImage.entity.Dhash;
 import com.example.cakeImage.entity.Phash;
@@ -23,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import java.io.Console;
+import java.io.File;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -69,7 +67,10 @@ public class ArithmeticController {
         System.out.println("sourceImagePath is "+sourceImagePath);
 //              存放相似集
 
-
+    if (method==null){
+        list.add("还没选择算法");
+        return list;
+    }
 //            使用平均值哈希算法
         if(method.contains("ahash")){
 
@@ -91,7 +92,7 @@ public class ArithmeticController {
                         continue;
                     }
                     int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
-                    if (differece<12){
+                    if (differece<7){
                         list.add(ahash.address);
                     }
 
@@ -118,7 +119,7 @@ public class ArithmeticController {
                     phash=map.get(i);
 //                    计算汉明距离
                     int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
-                    if (differece<=12){
+                    if (differece<=7){
                         list.add(phash.address);
                     }
                 }
@@ -146,7 +147,7 @@ public class ArithmeticController {
                     dhash=map.get(i);
 //                    计算汉明距离
                     int differece= SimilarImageSearch.hammingDistance(map.get(i).finger,sourceCode);
-                    if (differece<=12){
+                    if (differece<=7){
                         list.add(dhash.address);
                     }
                 }
@@ -158,10 +159,41 @@ public class ArithmeticController {
             if (similarList.size()==0)
                 System.out.println("没有相似图像");
         }else if(method.contains("sift")){
-
             Sift sift=new Sift();
-            list= sift.isSimilar(5,sourceImagePath);
+            try {
+//                保存特征值到本地
+//                Sift.saveCharacter(66);
+                for (int i=1;i<66;i++){
+                    List<MyPoint> list1=  Sift.readCharacterVectors(new File("G:\\java\\webprojects\\CakeImage\\siftdata\\"+i+".txt"));
+                    if (list1!=null){
+//                        获取原图的特征向量
+                      List<MyPoint>list2=  Sift.getCharacterVectors(sourceImagePath);
+                     boolean a= Sift.SiftGenerat(list1,list2);
+                     if (a){
+                         list.add("images/"+(i)+".jpg");
+                     }
+                    }
+                }
+
+            }catch (Exception e){
+//                e.printStackTrace();
+            }
+//            List<MyPoint> list1=  Sift.readCharacterVectors(new File("G:\\java\\webprojects\\CakeImage\\siftdata\\"+"1.txt"));
+//            System.out.println("list1 矩阵");
+//            if (list1==null)
+//                return null;
+//            for (int k=0;k<list1.size();k++){
+//                MyPoint myPoint=list1.get(k);
+//                for (int x=0;x<myPoint.getGrads().length;x++){
+//                    System.out.print(" "+myPoint.getGrads()[x]);
+//                }
+//                System.out.println();
+//            }
+//            list= sift.isSimilar(5,sourceImagePath);
             System.out.println("sift 方法的相似图片:"+list.toString());
+            return list;
+        }else{
+            list.add("还没选择算法");
             return list;
         }
 

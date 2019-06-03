@@ -9,8 +9,7 @@ import java.awt.*;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 /**
@@ -25,18 +24,83 @@ public class Sift {
 //        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
     BufferedImage image = null;
-    static String  fileName= PictureProcessin.path+"siftImage/";
+    static String  fileName= PictureProcessin.path+"images/";
 //    public static void main(String[] args) {
 //       List<MyPoint>list= getCharacterVectors(fileName+"1.jpg");
 //    }
 
 
+//保存该图片的特征点及特征向量集
+    public static void saveCharacter(int count)throws Exception{
+        for (int i=0;i<count;i++){
+            File file = new File("G:\\java\\webprojects\\CakeImage\\siftdata\\"+(i+1)+".txt"); //存放数组数据的文件
+            FileWriter out = new FileWriter(file);
+            BufferedWriter bw=new BufferedWriter(out);
+            List<MyPoint>list= getCharacterVectors(fileName+(i+1)+".jpg");
+            if (list==null)
+                continue;
+          for (int j=0;j<list.size();j++) {
+              double []a=list.get(j).getGrads();
+                for (int k=0;k<a.length;k++){
+                    bw.write(a[k] + "\t ");
+                    bw.flush();
+                }
+              bw.write ( " \n");
 
-//    获取该图片的特征点及特征向量
+          }
+          System.out.println("数据读取保存成功 "+i+1);
+
+        }
+    }
+//    读取一个文件
+    public static List<MyPoint> readCharacterVectors(File file){
+        List<MyPoint>list=new ArrayList<>();
+        try {
+            StringBuilder result = new StringBuilder();
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+
+            String s=null;
+            int i=0;
+            while((s = bufferedReader.readLine())!=null){
+                String[]temp=s.toString().replaceFirst(" ","").split("\\s+");
+                double[]a=new double[temp.length];
+                for (int k=0;k<temp.length;k++){
+                    a[k]=Double.parseDouble(temp[k]);
+                }
+                MyPoint myPoint=new MyPoint();
+                myPoint.setGrads(a);
+                list.add(myPoint);
+
+            }
+
+//            for (int k=0;k<list.size();k++){
+//                MyPoint myPoint=list.get(k);
+//                for (int x=0;x<myPoint.getGrads().length;x++){
+//                    System.out.print(" "+myPoint.getGrads()[x]);
+//                }
+//                System.out.println();
+//            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    private static String isDouble(String s) {
+        String str="";
+        for (int i=0;i<s.length();i++){
+            if (Character.isDigit(s.charAt(i))||s.charAt(i)=='.'){
+                str+=s.charAt(i);
+            }
+        }
+        return str;
+    }
+
+    //    获取该图片的特征点及特征向量
     public static List<MyPoint>  getCharacterVectors(String string) {
         BufferedImage bufferedImage=null;
             try{
-                bufferedImage= ImageIO.read(new File("G:\\java\\1.jpg"));
+                bufferedImage= ImageIO.read(new File(string));
                 //            灰度变换
                 bufferedImage=ImageToGray(bufferedImage);
 //            image转换成二维数组
@@ -54,7 +118,7 @@ public class Sift {
 
                 return vctors;
             }catch (Exception e){
-                e.printStackTrace();
+
             }
             return null;
     }
@@ -416,15 +480,20 @@ public class Sift {
             double[][] next = dogPyramid.get(index + 1);
             int width = img[0].length;
             int height = img.length;
-            if (pre != null && next != null && (y - 1) > 0 && (x - 1 > 0) && (y + 1 < height) && (x + 1 < width)) {
+            if(pre!=null&&next!=null&&y>1&&x>1&&y<height-2&&x<width-2){
 //               分别对三个分量求导的所构成的三行一列矩阵的参数矩阵
                 double[] df_x = new double[3];
 //                3*3的矩阵
                 double[][] df_xx = new double[3][3];
+                if((layer<1)||(layer>nLayer)||(x<1)||(x>width-1)||(y<1)||(y>height-1)){
+                    ///如果越界，则返回null
+                    return null;
+                }
 
-                df_x[0] = (img[x + 1][y] - img[x - 1][y]) / 2;
-                df_x[1] = (img[x][y + 1] - img[x][y - 1]) / 2;
-                df_x[2] = (next[x][y] - pre[x][y]) / 2;
+//                System.out.println("x="+x+ " y="+y);
+                df_x[0]=(img[y][x+1]-img[y][x-1])/2;
+                df_x[1]=(img[y+1][x]-img[y+1][x])/2;
+                df_x[2]=(next[y][x]-pre[y][x])/2;
 
                 double dxx = img[y][x + 1] + img[y][x + 1] - 2 * img[y][x];
                 double dxy = (img[y + 1][x + 1] - img[y + 1][x - 1] - (img[y - 1][x + 1] - img[y - 1][x - 1])) / 4;
@@ -454,12 +523,11 @@ public class Sift {
                     ///如果已经收敛
                     break;
                 }
-                if ((y - 1) > 0 || (x - 1 > 0) || (y + 1 < height) || (x + 1 < width)) {
-                    return null;
-                }
+
             }
 //            超出迭代次数，舍弃该点
             if (i >= MAX_STEP) {
+
                 return null;
             }
             kpoint.setX(x);
@@ -652,12 +720,55 @@ public class Sift {
         }
         return value;
     }
+//    获取相似集
+public static boolean SiftGenerat( List<MyPoint>sourcePoints,List<MyPoint>filePoint){
+    boolean isSimiliar=false;
+    int count=0;
+//    List<MyPoint>sourcePoints= getCharacterVectors(sourcePath);
+//    List<MyPoint>filePoint=getCharacterVectors(fileName);
+
+    for (int i=0;i<sourcePoints.size();i++){
+//          获取第一个点
+        MyPoint mp=new MyPoint();
+        mp=sourcePoints.get(i);
+//          该点的特征向量
+        double[]a= mp.getGrads();
+        ArrayList<Double>list=new ArrayList<>();
+        for (int j=0;j<filePoint.size();j++){
+            MyPoint mp1=new MyPoint();
+            mp1=filePoint.get(j);
+            double []b=mp1.getGrads();
+//              计算欧式距离，并保存在ArrayList中。
+            double distance= PointDistance(a,b);
+            list.add(distance);
+        }
+        Collections.sort(list);
+        if ((list.get(0)/list.get(1)<0.4)){
+            count++;
+        }
+    }
+
+    if (count>10)
+        return true;
+    else
+        return false;
+
+}
 //      获取相似集
     public static boolean SiftGenerat(String sourcePath,String fileName ){
         boolean isSimiliar=false;
         int count=0;
       List<MyPoint>sourcePoints= getCharacterVectors(sourcePath);
+      System.out.println("souce矩阵");
+        for (int k=0;k<sourcePoints.size();k++){
+            MyPoint myPoint=sourcePoints.get(k);
+            for (int x=0;x<myPoint.getGrads().length;x++){
+                System.out.print(" "+myPoint.getGrads()[x]);
+            }
+            System.out.println();
+        }
       List<MyPoint>filePoint=getCharacterVectors(fileName);
+
       for (int i=0;i<sourcePoints.size();i++){
 //          获取第一个点
           MyPoint mp=new MyPoint();
@@ -667,19 +778,19 @@ public class Sift {
           ArrayList<Double>list=new ArrayList<>();
           for (int j=0;j<filePoint.size();j++){
               MyPoint mp1=new MyPoint();
-              mp1=sourcePoints.get(j);
+              mp1=filePoint.get(j);
               double []b=mp1.getGrads();
 //              计算欧式距离，并保存在ArrayList中。
               double distance= PointDistance(a,b);
               list.add(distance);
           }
           Collections.sort(list);
-          if ((list.get(0)/list.get(1)<0.4)){
+          if ((list.get(0)*1.0/list.get(1)<0.4)){
               count++;
           }
       }
 
-      if (count>5)
+      if (count>10)
           return true;
       else
           return false;
@@ -702,7 +813,7 @@ public class Sift {
             try {
                boolean siftGenerat = SiftGenerat(sourcePath,fileName+(i + 1) + ".jpg");
                if (siftGenerat){
-                   list.add("siftImages/"+(i+1)+".jpg");
+                   list.add("images/"+(i+1)+".jpg");
                }
             }catch (Exception e){
                 e.printStackTrace();
